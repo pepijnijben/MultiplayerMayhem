@@ -8,7 +8,6 @@ class Game
 private:
 	sf::RenderWindow * window;
 	std::vector<GameObject*> gameObjects;
-	unsigned int lastTime;//time of last update;
 
 public:
 	static bool quit;

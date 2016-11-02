@@ -3,14 +3,18 @@
 
 Player::Player()
 {
+	srand(time(NULL));
+
 	m_shape.setRadius(3.0f);
 	m_shape.setFillColor(Color(0, 0, 255));
 	m_shape.setOrigin(3.0f, 3.0f);
-	m_position.x = 400.0f;
-	m_position.y = 300.0f;
 
-	// Random direction calculation
-	srand(time(NULL));
+	m_position.x = (rand() % 600) + 100;
+	m_position.y = (rand() % 400) + 100;
+
+	cout << "Start position: " << m_position.x << ", " << m_position.y << endl;
+
+	// Random start direction calculation
 	if (rand() % 2 == 0)
 	{
 		m_velocity.x = rand() % 2 ? MAX_VELOCITY : -MAX_VELOCITY;
@@ -21,6 +25,8 @@ Player::Player()
 		m_velocity.x = (rand() % (int)(MAX_VELOCITY * 2)) - MAX_VELOCITY;
 		m_velocity.y = rand() % 2 ? MAX_VELOCITY : -MAX_VELOCITY;
 	}
+
+	setNewStopDrawingValues();
 }
 
 Player::~Player()
@@ -82,7 +88,16 @@ void Player::Update(float deltaTime)
 		}
 	}
 
-	m_tail.push_back(Vector2f(m_position));
+	currentTime += deltaTime * 1000; // so its millisecs not seconds
+
+	if (currentTime < nextStopDrawing)
+	{	
+		m_tail.push_back(Vector2f(m_position));
+	}
+	else if (currentTime > nextStopDrawing + stopDrawingAfter)
+	{
+		setNewStopDrawingValues();
+	}
 	m_position += m_velocity * deltaTime;
 	m_shape.setPosition(GetPosition());
 }
@@ -94,4 +109,10 @@ Vector2f Player::normalize(const Vector2f& source)
 		return Vector2f(source.x / length, source.y / length);
 	else
 		return source;
+}
+
+void Player::setNewStopDrawingValues()
+{
+	nextStopDrawing = currentTime + (rand() % 5000) + 3000;
+	stopDrawingAfter = (rand() % 300) + 500;
 }
