@@ -5,7 +5,7 @@ Player::Player()
 {
 	m_shape.setRadius(3.0f);
 	m_shape.setFillColor(Color(0, 0, 255));
-	m_shape.setOrigin(5.0f, 5.0f);
+	m_shape.setOrigin(3.0f, 3.0f);
 	m_position.x = 400.0f;
 	m_position.y = 300.0f;
 
@@ -45,16 +45,9 @@ void Player::Update(float deltaTime)
 {
 	if (Keyboard::isKeyPressed(Keyboard::Right))
 	{
-		if (m_velocity.x >= 0 && m_velocity.y < MAX_VELOCITY) // go to down and right
+		if (m_velocity.x >= MAX_VELOCITY && m_velocity.y < MAX_VELOCITY) // go to down and right
 		{
-			if (m_velocity.x >= MAX_VELOCITY)
-			{
 				m_velocity.y += TURN_RATE;
-			}
-			else
-			{
-				m_velocity.x += TURN_RATE;
-			}
 		} 
 		else if (m_velocity.x > -MAX_VELOCITY && m_velocity.y >= MAX_VELOCITY) // go to down and left
 		{
@@ -64,7 +57,7 @@ void Player::Update(float deltaTime)
 		{
 			m_velocity.y -= TURN_RATE;
 		}
-		else if (m_velocity.y >= -MAX_VELOCITY && m_velocity.x < 0)
+		else if (m_velocity.y <= -MAX_VELOCITY && m_velocity.x < MAX_VELOCITY) // Right and Up
 		{
 			m_velocity.x += TURN_RATE;
 		}
