@@ -1,6 +1,8 @@
 #include "SceneManager.h"
 #include <iostream>
 
+SceneManager * SceneManager::instance = 0;
+
 SceneManager::SceneManager() : m_currentScene(nullptr)
 {
 }
@@ -58,6 +60,8 @@ void SceneManager::SwitchTo(string scene)
 		//enter the new scene
 		m_currentScene = nextScene;
 		m_currentScene->Enter();
+
+		cout << "Switched to scene " << m_currentScene->GetTitle() << endl;
 	}
 	else
 	{

@@ -12,7 +12,7 @@ private:
 	int localPort = 8081;
 
 	int remotePort = 8080;
-	IpAddress remoteIp = "192.168.1.43";
+	IpAddress remoteIp = "127.0.0.1";
 public:
 	Net();
 	~Net();

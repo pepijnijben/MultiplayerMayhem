@@ -118,14 +118,18 @@
   <ItemGroup>
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Net.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="Net.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />

@@ -1,5 +1,7 @@
 #include "Game.h"
 #include "Player.h"
+#include "SceneManager.h"
+#include "GameScene.h"
 
 const int MAX_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / MAX_FPS;
@@ -21,21 +23,21 @@ bool Game::init()
 	settings.antialiasingLevel = 8;
 
 	window = new sf::RenderWindow(sf::VideoMode(800, 600), "MultiPlayerMayhem", sf::Style::Default, settings);
-	gameObjects.push_back(new Player);
+	SceneManager::GetInstance()->AddScene(new GameScene);
+
+	SceneManager::GetInstance()->SwitchTo("GAME");
 
 	return true;
 }
 
 void Game::destroy()
 {
+	SceneManager::GetInstance()->Destroy();
 }
 
 void Game::update(float deltaTime)
 {
-	for (auto& obj : gameObjects)
-	{
-		obj->Update(deltaTime);
-	}
+	SceneManager::GetInstance()->Update(deltaTime);
 }
 
 void Game::render()
@@ -43,10 +45,7 @@ void Game::render()
 	// Clear the window
 	window->clear();
 
-	for (auto& obj : gameObjects)
-	{
-		obj->Render(*window);
-	}
+	SceneManager::GetInstance()->Render(*window);
 
 	// Show the window
 	window->display();
@@ -72,21 +71,8 @@ void Game::loop()
 		}
 
 		update(deltaTime);
-
-		// Send and Receive messages
-		string s = net.Receive();
-
-		if (s != "")
-		{
-			cout << "Received message: " << s << endl;
-		}
-
 		render();
 
-		if (Keyboard::isKeyPressed(Keyboard::D))
-		{
-			net.Send();
-		}
 		if (Keyboard::isKeyPressed(Keyboard::Escape))
 		{
 			Game::quit = true;
