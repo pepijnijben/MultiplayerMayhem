@@ -72,7 +72,25 @@ void Game::loop()
 		}
 
 		update(deltaTime);
+
+		// Send and Receive messages
+		string s = net.Receive();
+
+		if (s != "")
+		{
+			cout << "Received message: " << s << endl;
+		}
+
 		render();
+
+		if (Keyboard::isKeyPressed(Keyboard::D))
+		{
+			net.Send();
+		}
+		if (Keyboard::isKeyPressed(Keyboard::Escape))
+		{
+			Game::quit = true;
+		}
 
 		while (clock.getElapsedTime() <= sf::milliseconds(SCREEN_TICKS_PER_FRAME))
 		{

@@ -11,7 +11,6 @@ private:
 	Vector2f m_angle;
 	CircleShape m_shape;
 	vector<Vector2f> m_tail;
-	vector<Vertex> m_tail2;
 	
 	float MAX_VELOCITY = 40;
 	float TURN_RATE = 2;
