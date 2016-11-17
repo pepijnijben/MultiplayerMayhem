@@ -6,6 +6,6 @@ class GameUI : public UICanvas
 private:
 	
 public:
-	GameUI(Vector2f size);
+	GameUI();
 	~GameUI();
 };

@@ -9,9 +9,9 @@ void OnStartButton(Button * caller)
 	caller->SetVisible(false);
 }
 
-GameUI::GameUI(Vector2f size) : UICanvas(size)
+GameUI::GameUI()
 {
-	Button * button1 = new Button(Vector2f(400, 300), Vector2f(105, 25), "Start!");
+	Button * button1 = new Button(Vector2f(400, 300), "Start!");
 	m_gameObjects.push_back(button1);
 
 	button1->AddOnMouseDown(OnStartButton);

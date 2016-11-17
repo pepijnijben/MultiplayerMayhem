@@ -20,7 +20,7 @@ private:
 	vector<void*> m_onMouseUp;
 	vector<function<void*(bool)>> m_onHover;
 public:
-	Button(Vector2f pos, Vector2f size, string title);
+	Button(Vector2f pos, string title);
 	~Button() {};
 
 	void Render(sf::RenderWindow & r) override;

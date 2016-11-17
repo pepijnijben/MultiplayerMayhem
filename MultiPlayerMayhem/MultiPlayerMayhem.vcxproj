@@ -124,6 +124,8 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameUI.cpp" />
+    <ClCompile Include="LobbyScene.cpp" />
+    <ClCompile Include="LobbyUI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Net.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -138,6 +140,8 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameUI.h" />
+    <ClInclude Include="LobbyScene.h" />
+    <ClInclude Include="LobbyUI.h" />
     <ClInclude Include="Net.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />

@@ -7,7 +7,7 @@ bool GameScene::IsStarted = false;
 GameScene::GameScene() : Scene("GAME")
 {
 	m_gameObjects.push_back(new Player);
-	ui = new GameUI(Vector2f(0, 0));
+	ui = new GameUI();
 }
 
 void GameScene::Update(float deltaTime)

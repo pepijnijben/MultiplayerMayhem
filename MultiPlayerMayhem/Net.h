@@ -18,4 +18,7 @@ public:
 	~Net();
 	void Send();
 	string Receive();
+
+	// Temp value
+	static bool IsPlayer1;
 };

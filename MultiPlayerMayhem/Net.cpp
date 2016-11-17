@@ -1,5 +1,7 @@
 #include "Net.h"
 
+bool Net::IsPlayer1 = false;
+
 Net::Net()
 {
 	if (socket.bind(localPort) != Socket::Done)

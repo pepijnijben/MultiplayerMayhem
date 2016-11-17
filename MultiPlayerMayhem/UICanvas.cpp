@@ -1,8 +1,7 @@
 #include "UICanvas.h"
 
-UICanvas::UICanvas(Vector2f size)
+UICanvas::UICanvas()
 {
-	m_size = size;
 }
 
 UICanvas::~UICanvas()
@@ -27,14 +26,4 @@ void UICanvas::Update(float deltaTime)
 	{
 		obj->Update(deltaTime);
 	}
-}
-
-void UICanvas::SetSize(Vector2f size)
-{
-	m_size = size;
-}
-
-Vector2f UICanvas::GetSize()
-{
-	return m_size;
 }

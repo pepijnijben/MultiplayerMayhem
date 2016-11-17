@@ -1,10 +1,9 @@
 #include "Button.h"
 #include <iostream>
 
-Button::Button(Vector2f pos, Vector2f size, string title)
+Button::Button(Vector2f pos, string title)
 {
 	m_position = pos;
-	m_size = size;
 	m_isVisible = true;
 	m_isActive = true;
 
