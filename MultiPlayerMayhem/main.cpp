@@ -5,7 +5,7 @@ int main()
 {
 	//Init game
 	Game game;
-	
+
 	// Start game loop
 	game.loop();
 

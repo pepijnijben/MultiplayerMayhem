@@ -25,6 +25,6 @@ public:
 	Player();
 	~Player();
 
-	void Render(RenderWindow & r);
-	void Update(float deltaTime);
+	void Render(RenderWindow & r) override;
+	void Update(float deltaTime) override;
 };

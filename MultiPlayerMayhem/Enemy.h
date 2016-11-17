@@ -14,8 +14,8 @@ class Enemy : public GameObject
 		Enemy();
 		~Enemy();
 
-		void Render(RenderWindow & r);
-		void Update(float deltaTime);
-		void SetPosition(Vector2f pos);
+		void Render(RenderWindow & r) override;
+		void Update(float deltaTime) override;
+		void SetPosition(Vector2f pos) override;
 		void Deserialize(string message);
 };

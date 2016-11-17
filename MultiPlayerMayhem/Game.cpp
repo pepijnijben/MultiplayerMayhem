@@ -26,6 +26,7 @@ bool Game::init()
 	SceneManager::GetInstance()->AddScene(new GameScene);
 
 	SceneManager::GetInstance()->SwitchTo("GAME");
+	Font m_font;
 
 	return true;
 }

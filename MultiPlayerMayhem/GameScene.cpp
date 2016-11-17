@@ -1,9 +1,11 @@
 #include "GameScene.h"
 #include "Player.h"
+#include "GameUI.h"
 
 GameScene::GameScene() : Scene("GAME")
 {
 	m_gameObjects.push_back(new Player);
+	m_gameObjects.push_back(new GameUI(Vector2f(0, 0)));
 }
 
 void GameScene::Update(float deltaTime)

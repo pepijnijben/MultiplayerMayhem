@@ -13,6 +13,6 @@ public:
 	virtual void Render(sf::RenderWindow & r) = 0;
 	virtual void Update(float deltaTime) = 0;
 
-	sf::Vector2f GetPosition() { return m_position; }
-	void SetPosition(sf::Vector2f pos) { m_position = pos; }
+	sf::Vector2f GetPosition() const { return m_position; }
+	virtual void SetPosition(sf::Vector2f pos) { m_position = pos; }
 };
