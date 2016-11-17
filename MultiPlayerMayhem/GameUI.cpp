@@ -1,10 +1,11 @@
 #include "GameUI.h"
 #include "Button.h"
+#include "GameScene.h"
 #include <iostream>
 
-void OnStartButton(Button* caller)
+void OnStartButton(Button * caller)
 {
-	cout << "Button pressed" << endl;
+	GameScene::IsStarted = true;
 	caller->SetVisible(false);
 }
 

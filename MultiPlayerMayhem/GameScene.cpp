@@ -2,18 +2,25 @@
 #include "Player.h"
 #include "GameUI.h"
 
+bool GameScene::IsStarted = false;
+
 GameScene::GameScene() : Scene("GAME")
 {
 	m_gameObjects.push_back(new Player);
-	m_gameObjects.push_back(new GameUI(Vector2f(0, 0)));
+	ui = new GameUI(Vector2f(0, 0));
 }
 
 void GameScene::Update(float deltaTime)
 {
-	for (auto& obj : m_gameObjects)
+	if (IsStarted)
 	{
-		obj->Update(deltaTime);
+		for (auto& obj : m_gameObjects)
+		{
+			obj->Update(deltaTime);
+		}
 	}
+
+	ui->Update(deltaTime);
 
 	// Send and Receive messages
 	string s = net.Receive();
@@ -35,6 +42,8 @@ void GameScene::Render(RenderWindow & r)
 	{
 		obj->Render(r);
 	}
+
+	ui->Render(r);
 }
 
 void GameScene::Destroy()
