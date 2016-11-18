@@ -84,6 +84,11 @@
       <AdditionalLibraryDirectories>$(solutionDir)Dependencies\SFML-2.4.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /y "$(solutionDir)Dependencies\SFML-2.4.0\bin\*.dll" "$(OutDir)"
+mkdir "$(OutDir)fonts"
+copy /y ".\fonts\" "$(OutDir)fonts\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

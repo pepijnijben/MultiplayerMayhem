@@ -1,5 +1,6 @@
 #include "Player.h"
 #include <iostream>
+#include <sstream> 
 
 Player::Player()
 {
@@ -100,6 +101,15 @@ void Player::Update(float deltaTime)
 	}
 	m_position += m_velocity * deltaTime;
 	m_shape.setPosition(GetPosition());
+}
+
+string Player::Serialize()
+{
+	ostringstream ss;
+
+	ss << m_position.x << ";" << m_position.y << ";";
+
+	return ss.str();
 }
 
 Vector2f Player::normalize(const Vector2f& source)

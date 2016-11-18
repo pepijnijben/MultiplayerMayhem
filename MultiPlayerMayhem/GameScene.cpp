@@ -1,12 +1,16 @@
 #include "GameScene.h"
-#include "Player.h"
 #include "GameUI.h"
 
 bool GameScene::IsStarted = false;
 
 GameScene::GameScene() : Scene("GAME")
 {
-	m_gameObjects.push_back(new Player);
+	m_player = new Player();
+	m_gameObjects.push_back(m_player);
+
+	m_enemy = new Enemy();
+	m_gameObjects.push_back(m_enemy);
+
 	ui = new GameUI();
 }
 
@@ -24,15 +28,17 @@ void GameScene::Update(float deltaTime)
 
 	// Send and Receive messages
 	string s = net.Receive();
+	net.Send(m_player->Serialize());
 
 	if (s != "")
 	{
-		cout << "Received message: " << s << endl;
+		//cout << "Received message: " << s << endl;
+		m_enemy->Deserialize(s);
 	}
 
 	if (Keyboard::isKeyPressed(Keyboard::D))
 	{
-		net.Send();
+		net.Send("This is a test message");
 	}
 }
 
@@ -54,5 +60,5 @@ void GameScene::Destroy()
 
 void GameScene::Enter()
 {
-	// TODO: Add in stuff that has to start when the gamescene is entered
+	net.Init();
 }

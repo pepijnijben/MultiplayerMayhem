@@ -11,12 +11,15 @@ private:
 	UdpSocket socket;
 	int localPort = 8081;
 
+	int p1Port = 8081;
+	int p2Port = 8082;
 	int remotePort = 8080;
 	IpAddress remoteIp = "127.0.0.1";
 public:
 	Net();
 	~Net();
-	void Send();
+	void Init();
+	void Send(string message);
 	string Receive();
 
 	// Temp value

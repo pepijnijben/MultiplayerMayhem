@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include <iostream>
 
 Enemy::Enemy()
 {
@@ -27,7 +28,7 @@ void Enemy::Render(RenderWindow & r)
 
 void Enemy::Update(float deltaTime)
 {
-	m_shape.setPosition(m_position);
+	//m_shape.setPosition(m_position);
 }
 
 void Enemy::SetPosition(Vector2f pos)
@@ -38,5 +39,19 @@ void Enemy::SetPosition(Vector2f pos)
 
 void Enemy::Deserialize(string message)
 {
-	// TODO: Deserialize message and set position
+	size_t pos = 0;
+	string delimiter = ";";
+	vector<string> token;
+	while ((pos = message.find(delimiter)) != string::npos) {
+		token.push_back(message.substr(0, pos));
+		message.erase(0, pos + delimiter.length());
+	}
+
+	if (token.size() >= 2)
+	{
+		float x = stof(token.at(0));
+		float y = stof(token.at(1));
+
+		SetPosition(Vector2f(x, y));
+	}
 }
