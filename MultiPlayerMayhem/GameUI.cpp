@@ -12,9 +12,9 @@ void OnStartButton(Button * caller)
 GameUI::GameUI()
 {
 	Button * button1 = new Button(Vector2f(400, 300), "Start!");
-	m_gameObjects.push_back(button1);
+	//m_gameObjects.push_back(button1);
 
-	button1->AddOnMouseDown(OnStartButton);
+	//button1->AddOnMouseDown(OnStartButton);
 }
 
 GameUI::~GameUI()

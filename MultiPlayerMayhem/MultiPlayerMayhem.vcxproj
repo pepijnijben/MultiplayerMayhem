@@ -145,6 +145,7 @@ copy /y ".\fonts\" "$(OutDir)fonts\"</Command>
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameUI.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="LobbyUI.h" />
     <ClInclude Include="Net.h" />

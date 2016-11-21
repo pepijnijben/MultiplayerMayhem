@@ -21,5 +21,7 @@ public:
 	void Destroy() override;
 	void Enter() override;
 
+	vector<string> DeserializeMessage(string message);
+
 	static bool IsStarted;
 };

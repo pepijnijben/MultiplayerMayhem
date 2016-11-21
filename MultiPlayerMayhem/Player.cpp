@@ -42,9 +42,22 @@ void Player::Render(RenderWindow & r)
 	{
 		temp = CircleShape(m_shape);
 		temp.setPosition(obj);
-
 		r.draw(temp);
 	}
+
+	for (auto& lines : m_lines)
+	{
+		for (auto & line : lines)
+		{
+			r.draw(line);
+		}
+	}
+
+	if (m_tail.size() > 0 && !stopDrawing)
+	{
+		r.draw(Line(m_tail[m_tail.size() - 1], m_position, m_shape.getFillColor()));
+	}
+
 	r.draw(m_shape);
 }
 
@@ -93,11 +106,27 @@ void Player::Update(float deltaTime)
 
 	if (currentTime < nextStopDrawing)
 	{	
-		m_tail.push_back(Vector2f(m_position));
+		if (currentTick % 10 == 0)
+		{
+			if (m_tail.size() > 0 && !stopDrawing)
+			{
+				m_lines.at(m_lines.size() - 1).push_back(Line(m_tail.at(m_tail.size() - 1), m_position, m_shape.getFillColor()));
+			}
+
+			stopDrawing = false;
+
+			m_tail.push_back(Vector2f(m_position));
+		}
+		currentTick++;
 	}
 	else if (currentTime > nextStopDrawing + stopDrawingAfter)
 	{
 		setNewStopDrawingValues();
+		currentTick = 0;
+	}
+	else
+	{
+		stopDrawing = true;
 	}
 	m_position += m_velocity * deltaTime;
 	m_shape.setPosition(GetPosition());
@@ -107,8 +136,7 @@ string Player::Serialize()
 {
 	ostringstream ss;
 
-	ss << m_position.x << ";" << m_position.y << ";";
-
+	ss << "ENEMY" << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";";
 	return ss.str();
 }
 
@@ -125,4 +153,6 @@ void Player::setNewStopDrawingValues()
 {
 	nextStopDrawing = currentTime + (rand() % 5000) + 3000;
 	stopDrawingAfter = (rand() % 300) + 500;
+
+	m_lines.push_back(vector<Line>());
 }

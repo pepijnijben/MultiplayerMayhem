@@ -20,7 +20,7 @@ public:
 	~Net();
 	void Init();
 	void Send(string message);
-	string Receive();
+	vector<string> Receive();
 
 	// Temp value
 	static bool IsPlayer1;

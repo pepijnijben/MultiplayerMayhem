@@ -52,21 +52,27 @@ void Net::Send(string message)
 	}
 }
 
-string Net::Receive()
+vector<string> Net::Receive()
 {
+	vector<string> messages;
+
 	IpAddress sender;
 	unsigned short port;
 
 	char data[100];
 	size_t received;
 
-	if (socket.receive(data, 100, received, sender, port) != Socket::NotReady)
-	{	
-		//cout << "Received data package with " << received << " bytes." << endl;
-
+	while (socket.receive(data, 100, received, sender, port) != Socket::NotReady)
+	{
 		if (received > 0)
-			return data;
+			messages.push_back(data);
 	}
 
-	return string();
+	/*if (socket.receive(data, 100, received, sender, port) != Socket::NotReady)
+	{	
+		if (received > 0)
+			return data;
+	}*/
+
+	return messages;
 }

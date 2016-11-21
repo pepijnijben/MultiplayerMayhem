@@ -16,6 +16,31 @@ GameScene::GameScene() : Scene("GAME")
 
 void GameScene::Update(float deltaTime)
 {
+	// Send and Receive messages
+	vector<string> messages = net.Receive();
+	net.Send(m_player->Serialize());
+
+	for (auto & s : messages)
+	{
+		if (s != "")
+		{
+			vector<string> values = DeserializeMessage(s);
+
+			if (values[0] == "ENEMY")
+			{
+				m_enemy->Deserialize(values);
+			}
+			else if (values[0] == "GAME")
+			{
+				if (values[1] == "STARTED")
+				{
+					IsStarted = true;
+					net.Send("GAME;STARTED;");
+				}
+			}
+		}
+	}
+
 	if (IsStarted)
 	{
 		for (auto& obj : m_gameObjects)
@@ -25,21 +50,6 @@ void GameScene::Update(float deltaTime)
 	}
 
 	ui->Update(deltaTime);
-
-	// Send and Receive messages
-	string s = net.Receive();
-	net.Send(m_player->Serialize());
-
-	if (s != "")
-	{
-		//cout << "Received message: " << s << endl;
-		m_enemy->Deserialize(s);
-	}
-
-	if (Keyboard::isKeyPressed(Keyboard::D))
-	{
-		net.Send("This is a test message");
-	}
 }
 
 void GameScene::Render(RenderWindow & r)
@@ -61,4 +71,19 @@ void GameScene::Destroy()
 void GameScene::Enter()
 {
 	net.Init();
+	net.Send("GAME;STARTED;");
+}
+
+vector<string> GameScene::DeserializeMessage(string message)
+{
+	size_t pos = 0;
+	string delimiter = ";";
+	vector<string> token;
+
+	while ((pos = message.find(delimiter)) != string::npos) {
+		token.push_back(message.substr(0, pos));
+		message.erase(0, pos + delimiter.length());
+	}
+
+	return token;
 }

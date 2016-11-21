@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Line.h"
 
 using namespace sf;
 using namespace std;
@@ -11,6 +12,8 @@ private:
 	Vector2f m_angle;
 	CircleShape m_shape;
 	vector<Vector2f> m_tail;
+	vector<vector<Line>> m_lines;
+
 	
 	float MAX_VELOCITY = 40;
 	float TURN_RATE = 2;
@@ -18,6 +21,8 @@ private:
 	int currentTime = 0; // in millisecs
 	int stopDrawingAfter = 500;
 	int nextStopDrawing;
+	bool stopDrawing = false;
+	int currentTick = 0;
 
 	Vector2f normalize(const Vector2f& source);
 	void setNewStopDrawingValues();
