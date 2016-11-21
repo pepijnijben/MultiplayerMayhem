@@ -124,6 +124,7 @@ copy /y ".\fonts\" "$(OutDir)fonts\"</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="APIHandler.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -139,6 +140,7 @@ copy /y ".\fonts\" "$(OutDir)fonts\"</Command>
     <ClCompile Include="UICanvas.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="APIHandler.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />

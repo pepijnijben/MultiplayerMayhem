@@ -1,8 +1,10 @@
 #include "LobbyScene.h"
+#include "APIHandler.h"
 
 LobbyScene::LobbyScene() : Scene("LOBBY")
 {
 	ui = new LobbyUI();
+	APIHandler::GetInstance()->newPlayer("pepijn", 8080);
 }
 
 void LobbyScene::Update(float deltaTime)
