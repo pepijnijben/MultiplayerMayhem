@@ -5,15 +5,12 @@ $username = "admin";
 $password = "pass";
 $dbname = "multiplayer_mayhem";
 
-if (!$_POST['name'] && !$_POST['port'])
+if (!$_POST['name'])
 {
-	die("Please provide name and port");
+	die("Please provide name");
 }
 
 $name = $_POST['name'];
-$port = $_POST['port'];
-
-
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -23,11 +20,10 @@ if ($conn->connect_error) {
 } 
 
 
-$sql = "INSERT INTO players (name, ip, port, last_update)
-VALUES ('".$name."', '".$_SERVER['REMOTE_ADDR']."', '".$port."', '".date("Y-m-d H:i:s")."')";
+$sql = "UPDATE players SET last_update='".date("Y-m-d H:i:s")."' WHERE name=".$name;
 
 if ($conn->query($sql) === TRUE) {
-    echo "New record created successfully";
+    echo "$name successfully checked in";
 } else {
     echo "Error: " . $sql . "<br>" . $conn->error;
 }

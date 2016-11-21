@@ -6,6 +6,15 @@
 using namespace sf;
 using namespace std;
 
+struct NetPlayer
+{
+	NetPlayer() {};
+	string name;
+	string ip;
+	int port;
+	int room_id;
+};
+
 class APIHandler
 {
 private:
@@ -20,4 +29,5 @@ public:
 	static APIHandler * GetInstance();
 
 	void newPlayer(string player, int port);
+	vector<NetPlayer> getPlayers();
 };

@@ -2,7 +2,6 @@
 
 APIHandler * APIHandler::instance = 0;
 
-
 APIHandler * APIHandler::GetInstance()
 {
 	if (instance == 0)
@@ -25,4 +24,36 @@ void APIHandler::newPlayer(string player, int port)
 	Http::Response response = http.sendRequest(request);
 
 	cout << response.getBody() << endl;
+}
+
+vector<NetPlayer> APIHandler::getPlayers()
+{
+	Http::Request request("/getPlayers.php", Http::Request::Get);
+
+	Http::Response response = http.sendRequest(request);
+
+	string message = response.getBody();
+
+	size_t pos = 0;
+	string delimiter = ";";
+	vector<string> token;
+	vector<NetPlayer> players;
+
+	while ((pos = message.find(delimiter)) != string::npos) {
+		token.push_back(message.substr(0, pos));
+		message.erase(0, pos + delimiter.length());
+	}
+
+	for(int i = 0; i < token.size(); i += 4)
+	{
+		NetPlayer np;
+		np.name = token[i];
+		np.room_id = stoi(token[i + 1]);
+		np.ip = token[i + 2];
+		np.port = stoi(token[i + 3]);
+
+		players.push_back(np);
+	}
+
+	return players;
 }
