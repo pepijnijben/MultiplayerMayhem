@@ -1,0 +1,1 @@
+* * * * * php /var/www/html/cleanPlayers.php 2>&1

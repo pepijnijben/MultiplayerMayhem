@@ -43,3 +43,22 @@ LobbyUI::~LobbyUI()
 {
 	UICanvas::~UICanvas();
 }
+
+void LobbyUI::Update(float deltaTime)
+{
+	UICanvas::Update(deltaTime);
+
+	m_currentTime += deltaTime;
+
+	if (m_currentTime >= m_updateListsTime)
+	{
+		m_pInLobby->CleanList();
+
+		for (auto & item : APIHandler::GetInstance()->getPlayers())
+		{
+			m_pInLobby->AddRow(item.name);
+		}
+
+		m_currentTime = 0.0f;
+	}
+}

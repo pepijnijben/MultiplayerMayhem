@@ -71,4 +71,9 @@ public:
 		//m_gameObjects.push_back(new ListItem());
 		m_listItems.push_back(s);
 	}
+
+	void CleanList()
+	{
+		m_listItems.clear();
+	}
 };
