@@ -5,12 +5,12 @@ $username = "admin";
 $password = "pass";
 $dbname = "multiplayer_mayhem";
 
-if (!$_POST['name'])
+if (!$_POST['id'])
 {
-	die("Please provide name");
+	die("Please provide id");
 }
 
-$name = $_POST['name'];
+$id = $_POST['id'];
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -20,10 +20,10 @@ if ($conn->connect_error) {
 } 
 
 
-$sql = "UPDATE players SET last_update='".date("Y-m-d H:i:s")."' WHERE name=".$name;
+$sql = "UPDATE players SET last_update='".date("Y-m-d H:i:s")."' WHERE id=".$id;
 
 if ($conn->query($sql) === TRUE) {
-    echo "$name successfully checked in";
+    echo "$id successfully checked in";
 } else {
     echo "Error: " . $sql . "<br>" . $conn->error;
 }

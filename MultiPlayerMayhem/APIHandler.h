@@ -19,6 +19,7 @@ class APIHandler
 {
 private:
 	static APIHandler * instance;
+	int me;
 	Http http;
 public:
 	APIHandler()
@@ -29,5 +30,6 @@ public:
 	static APIHandler * GetInstance();
 
 	void newPlayer(string player, int port);
+	void checkInPlayer();
 	vector<NetPlayer> getPlayers();
 };

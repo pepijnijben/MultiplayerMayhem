@@ -59,6 +59,8 @@ void LobbyUI::Update(float deltaTime)
 			m_pInLobby->AddRow(item.name);
 		}
 
+		APIHandler::GetInstance()->checkInPlayer();
+
 		m_currentTime = 0.0f;
 	}
 }

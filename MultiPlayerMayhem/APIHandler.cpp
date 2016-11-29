@@ -23,7 +23,27 @@ void APIHandler::newPlayer(string player, int port)
 
 	Http::Response response = http.sendRequest(request);
 
-	cout << response.getBody() << endl;
+	try
+	{
+		me = stoi(response.getBody());
+		cout << "Successfully logged in with id " << me << endl;
+	}
+	catch (exception e)
+	{
+		cout << "An error occured when logging into the lobby server: " << response.getBody() << endl;
+	}
+}
+
+void APIHandler::checkInPlayer()
+{
+	ostringstream ss;
+
+	ss << "id=" << me;
+
+	Http::Request request("/checkInPlayer.php", Http::Request::Post);
+	request.setBody(ss.str());
+
+	Http::Response response = http.sendRequest(request);
 }
 
 vector<NetPlayer> APIHandler::getPlayers()

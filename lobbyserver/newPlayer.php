@@ -27,7 +27,8 @@ $sql = "INSERT INTO players (name, ip, port, last_update)
 VALUES ('".$name."', '".$_SERVER['REMOTE_ADDR']."', '".$port."', '".date("Y-m-d H:i:s")."')";
 
 if ($conn->query($sql) === TRUE) {
-    echo "New record created successfully";
+	$last_id = $conn->insert_id;
+    echo $last_id;
 } else {
     echo "Error: " . $sql . "<br>" . $conn->error;
 }
