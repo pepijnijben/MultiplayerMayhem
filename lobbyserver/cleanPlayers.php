@@ -26,7 +26,7 @@ while ($timestamp > time())
 	
 	if ($result->num_rows > 0) {
 		while($row = $result->fetch_assoc()) {
-			if (time() - 10 > strtotime($row['last_update']))
+			if (time() - 5 > strtotime($row['last_update']))
 			{
 				$results[] = $row['id'];
 			}

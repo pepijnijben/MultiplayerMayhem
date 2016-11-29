@@ -4,7 +4,7 @@
 LobbyScene::LobbyScene() : Scene("LOBBY")
 {
 	srand(time(NULL));
-	APIHandler::GetInstance()->newPlayer("p" + to_string(rand() % 5000 ), 8080);
+	APIHandler::GetInstance()->newPlayer("p" + to_string(rand() % 5000), 8080);
 	ui = new LobbyUI();
 }
 

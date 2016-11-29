@@ -3,7 +3,7 @@
 #include "ListBox.h"
 #include "APIHandler.h"
 
-class LobbyUI : public UICanvas
+class RoomUI : public UICanvas
 {
 private:
 	ListBox * m_pInLobby;
@@ -14,8 +14,8 @@ private:
 	float m_updateListsTime = 1.0f;
 	float m_currentTime = 0.0f;
 public:
-	LobbyUI();
-	~LobbyUI();
+	RoomUI();
+	~RoomUI();
 
 	void Update(float deltaTime) override;
 };

@@ -2,6 +2,58 @@
 
 APIHandler * APIHandler::instance = 0;
 
+vector<NetPlayer> APIHandler::DeserializePlayers(string message)
+{
+	size_t pos = 0;
+	string delimiter = ";";
+	vector<string> token;
+	vector<NetPlayer> players;
+
+	while ((pos = message.find(delimiter)) != string::npos) {
+		token.push_back(message.substr(0, pos));
+		message.erase(0, pos + delimiter.length());
+	}
+
+	for (int i = 0; i < token.size(); i += 4)
+	{
+		NetPlayer np;
+		np.name = token[i];
+		np.room_id = stoi(token[i + 1]);
+		np.ip = token[i + 2];
+		np.port = stoi(token[i + 3]);
+
+		players.push_back(np);
+	}
+
+	return players;
+}
+
+vector<Room> APIHandler::DeserializeRooms(string message)
+{
+	vector<Room> rooms;
+	size_t pos = 0;
+	string delimiter = ";";
+	vector<string> token;
+
+	while ((pos = message.find(delimiter)) != string::npos) {
+		token.push_back(message.substr(0, pos));
+		message.erase(0, pos + delimiter.length());
+	}
+
+	for (int i = 0; i < token.size(); i += 4)
+	{
+		Room r;
+		r.id = stoi(token[i]);
+		r.name = token[i + 1];
+		r.owner = stoi(token[i + 2]);
+		r.started = stoi(token[i + 3]);
+
+		rooms.push_back(r);
+	}
+
+	return rooms;
+}
+
 APIHandler * APIHandler::GetInstance()
 {
 	if (instance == 0)
@@ -54,26 +106,85 @@ vector<NetPlayer> APIHandler::getPlayers()
 
 	string message = response.getBody();
 
-	size_t pos = 0;
-	string delimiter = ";";
-	vector<string> token;
-	vector<NetPlayer> players;
+	return DeserializePlayers(message);
+}
 
-	while ((pos = message.find(delimiter)) != string::npos) {
-		token.push_back(message.substr(0, pos));
-		message.erase(0, pos + delimiter.length());
-	}
+void APIHandler::createRoom()
+{
+	ostringstream ss;
 
-	for(int i = 0; i < token.size(); i += 4)
+	ss << "id=" << me;
+
+	Http::Request request("/createRoom.php", Http::Request::Post);
+	request.setBody(ss.str());
+
+	Http::Response response = http.sendRequest(request);
+
+	try
 	{
-		NetPlayer np;
-		np.name = token[i];
-		np.room_id = stoi(token[i + 1]);
-		np.ip = token[i + 2];
-		np.port = stoi(token[i + 3]);
+		//currentRoom = stoi(response.getBody());
+		cout << "Successfully created room " << response.getBody() << endl;
 
-		players.push_back(np);
+		joinRoom(stoi(response.getBody()));
+	}
+	catch (exception e)
+	{
+		cout << "An error occured when creating a new room: " << response.getBody() << endl;
+	}
+}
+
+void APIHandler::joinRoom(int roomId)
+{
+	if (currentRoom == roomId)
+	{
+		return;
 	}
 
-	return players;
+	ostringstream ss;
+
+	ss << "id=" << me << "&roomId=" << roomId;
+
+	Http::Request request("/joinRoom.php", Http::Request::Post);
+	request.setBody(ss.str());
+
+	Http::Response response = http.sendRequest(request);
+
+	try
+	{
+		currentRoom = stoi(response.getBody());
+		cout << "Successfully joined room " << currentRoom << endl;
+	}
+	catch (exception e)
+	{
+		cout << "An error occured when joining a room: " << response.getBody() << endl;
+	}
+}
+
+vector<Room> APIHandler::getRooms()
+{
+	Http::Request request("/getRooms.php", Http::Request::Get);
+
+	Http::Response response = http.sendRequest(request);
+
+	string message = response.getBody();
+
+	return DeserializeRooms(message);
+}
+
+bool APIHandler::IsHost()
+{
+	for(auto& obj : getRooms())
+	{
+		if (obj.id == currentRoom)
+		{
+			if (obj.owner == me)
+			{
+				return true;
+			}
+
+			break;
+		}
+	}
+
+	return false;
 }

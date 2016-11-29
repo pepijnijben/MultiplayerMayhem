@@ -2,7 +2,6 @@
 #include "Button.h"
 #include "SceneManager.h"
 #include "Net.h"
-#include "APIHandler.h"
 
 void OnSetupButton(Button * caller)
 {
@@ -18,25 +17,31 @@ void OnSetupButton(Button * caller)
 	SceneManager::GetInstance()->SwitchTo("GAME");
 }
 
+void OnCreateRoom(Button * caller)
+{
+	APIHandler::GetInstance()->createRoom();
+}
 
 LobbyUI::LobbyUI() 
 {
-	Button * p1 = new Button(Vector2f(400, 250), "Player 1");
-	Button * p2 = new Button(Vector2f(400, 350), "Player 2");
-	
-	m_pInLobby = new ListBox(Vector2f(25, 25), Vector2f(100, 200));
+	//Button * p1 = new Button(Vector2f(400, 250), "Player 1");
+	//Button * p2 = new Button(Vector2f(400, 350), "Player 2");
+	//p1->AddOnMouseDown(OnSetupButton);
+	//p2->AddOnMouseDown(OnSetupButton);
+	//m_gameObjects.push_back(p1);
+	//m_gameObjects.push_back(p2);
 
-	for (auto & item : APIHandler::GetInstance()->getPlayers())
-	{
-		m_pInLobby->AddRow(item.name);
-	}
+	// Create room button
+	Button * createRoom = new Button(Vector2f(100, 555), "Create Room");
+	createRoom->AddOnMouseDown(OnCreateRoom);
 
-	p1->AddOnMouseDown(OnSetupButton);
-	p2->AddOnMouseDown(OnSetupButton);
+	// ListBoxes
+	m_pInLobby = new ListBox(Vector2f(25, 25), Vector2f(150, 485));
+	m_rooms = new ListBox(Vector2f(200, 25), Vector2f(575, 550));
 
-	m_gameObjects.push_back(p1);
-	m_gameObjects.push_back(p2);
+	m_gameObjects.push_back(createRoom);
 	m_gameObjects.push_back(m_pInLobby);
+	m_gameObjects.push_back(m_rooms);
 }
 
 LobbyUI::~LobbyUI()
@@ -59,8 +64,21 @@ void LobbyUI::Update(float deltaTime)
 			m_pInLobby->AddRow(item.name);
 		}
 
+		m_rooms->CleanList();
+		m_roomVector = APIHandler::GetInstance()->getRooms();
+		for (auto & item : m_roomVector)
+		{
+			m_rooms->AddRow(item.name);
+		}
+
 		APIHandler::GetInstance()->checkInPlayer();
 
 		m_currentTime = 0.0f;
+	}
+
+	if (m_rooms->IsPressed())
+	{
+		//cout << m_roomVector[m_rooms->CurrentSelected()].name << endl;
+		APIHandler::GetInstance()->joinRoom(m_roomVector[m_rooms->CurrentSelected()].id);
 	}
 }
