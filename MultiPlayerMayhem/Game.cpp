@@ -3,6 +3,7 @@
 #include "SceneManager.h"
 #include "GameScene.h"
 #include "LobbyScene.h"
+#include "RoomScene.h"
 
 const int MAX_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / MAX_FPS;
@@ -26,6 +27,7 @@ bool Game::init()
 	window = new sf::RenderWindow(sf::VideoMode(800, 600), "MultiPlayerMayhem", sf::Style::Default, settings);
 	SceneManager::GetInstance()->AddScene(new GameScene);
 	SceneManager::GetInstance()->AddScene(new LobbyScene);
+	SceneManager::GetInstance()->AddScene(new RoomScene);
 
 	SceneManager::GetInstance()->SwitchTo("LOBBY");
 	Font m_font;

@@ -9,10 +9,10 @@
 class GameScene : public Scene
 {
 private:
-	Net net;
+	Net * net;
 	GameUI * ui;
 	Player * m_player;
-	Enemy * m_enemy;
+	vector<Enemy*> m_enemys;
 public:
 	GameScene();
 

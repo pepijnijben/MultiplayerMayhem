@@ -16,6 +16,8 @@ class Enemy : public GameObject
 		int currentTick = 0;
 
 	public:
+		string Name;
+
 		Enemy();
 		~Enemy();
 

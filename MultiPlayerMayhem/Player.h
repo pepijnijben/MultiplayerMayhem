@@ -30,6 +30,10 @@ public:
 	Player();
 	~Player();
 
+	void ResetPlayer();
+
+	string Name;
+
 	void Render(RenderWindow & r) override;
 	void Update(float deltaTime) override;
 

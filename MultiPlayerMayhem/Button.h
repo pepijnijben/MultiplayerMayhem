@@ -30,7 +30,14 @@ public:
 	bool IsPressed() { return m_isPressed; }
 	bool IsVisible() { return m_isVisible; }
 
-	void SetActive(bool active) { m_isActive = active; }
+	void SetActive(bool active) 
+	{ 
+		Color c	= m_background.getFillColor();
+		c.a = active ? 255 : 128;
+		m_background.setFillColor(c);
+
+		m_isActive = active; 
+	}
 	void SetVisible(bool visible) { m_isVisible = visible; }
 	string GetTitle() { return m_title.getString(); }
 	

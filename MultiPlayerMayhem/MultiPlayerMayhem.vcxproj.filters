@@ -60,9 +60,6 @@
     <ClCompile Include="RoomScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RoomUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -116,7 +113,7 @@
     <ClInclude Include="RoomScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RoomUI.h">
+    <ClInclude Include="BasicTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,10 +1,16 @@
 #include "Enemy.h"
+#include "BasicTypes.h"
 #include <iostream>
 
 Enemy::Enemy()
 {
 	m_shape.setRadius(3.0f);
-	m_shape.setFillColor(Color(255, 0, 0));
+
+	int r = rand() % cols_left.size();
+	Color c = cols_left[r];
+	cols_left.erase(cols_left.begin());
+
+	m_shape.setFillColor(c);
 	m_shape.setOrigin(3.0f, 3.0f);
 
 	m_lines.push_back(vector<Line>());
@@ -63,12 +69,12 @@ void Enemy::SetPosition(Vector2f pos)
 
 void Enemy::Deserialize(vector<string> token)
 {
-	if (token.size() >= 4)
+	if (token.size() >= 5)
 	{
-		float x = stof(token.at(1));
-		float y = stof(token.at(2));
+		float x = stof(token.at(2));
+		float y = stof(token.at(3));
 
-		bool tempDrawing = stoi(token.at(3));
+		bool tempDrawing = stoi(token.at(4));
 
 		if (stopDrawing && !tempDrawing)
 		{

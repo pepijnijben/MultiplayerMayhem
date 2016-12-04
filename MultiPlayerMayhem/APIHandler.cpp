@@ -77,6 +77,7 @@ void APIHandler::newPlayer(string player, int port)
 
 	try
 	{
+		myName = player;
 		me = stoi(response.getBody());
 		cout << "Successfully logged in with id " << me << endl;
 	}
@@ -109,6 +110,41 @@ vector<NetPlayer> APIHandler::getPlayers()
 	return DeserializePlayers(message);
 }
 
+vector<NetPlayer> APIHandler::getRoomPlayers()
+{
+	ostringstream ss;
+
+	ss << "roomId=" << currentRoom;
+
+	Http::Request request("/getRoomPlayers.php", Http::Request::Post);
+	request.setBody(ss.str());
+
+	Http::Response response = http.sendRequest(request);
+
+	string message = response.getBody();
+	return DeserializePlayers(message);
+}
+
+vector<NetPlayer> APIHandler::getRoomOtherPlayers()
+{
+	return getRoomOtherPlayers(getRoomPlayers());
+}
+
+vector<NetPlayer> APIHandler::getRoomOtherPlayers(vector<NetPlayer> players)
+{
+	vector<NetPlayer> newPlayers;
+	for (auto & player : players)
+	{
+		if (player.name != myName)
+		{
+			cout << player.name << " : " << myName << endl;
+			newPlayers.push_back(player);
+		}
+	}
+
+	return newPlayers;
+}
+
 void APIHandler::createRoom()
 {
 	ostringstream ss;
@@ -122,15 +158,26 @@ void APIHandler::createRoom()
 
 	try
 	{
-		//currentRoom = stoi(response.getBody());
 		cout << "Successfully created room " << response.getBody() << endl;
-
 		joinRoom(stoi(response.getBody()));
 	}
 	catch (exception e)
 	{
 		cout << "An error occured when creating a new room: " << response.getBody() << endl;
 	}
+}
+
+void APIHandler::removeRoom()
+{
+	ostringstream ss;
+
+	ss << "roomId=" << currentRoom;
+
+	Http::Request request("/removeRoom.php", Http::Request::Post);
+	request.setBody(ss.str());
+
+	Http::Response response = http.sendRequest(request);
+	currentRoom = -1;
 }
 
 void APIHandler::joinRoom(int roomId)

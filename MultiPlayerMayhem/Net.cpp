@@ -1,10 +1,22 @@
 #include "Net.h"
 
-bool Net::IsPlayer1 = false;
+Net * Net::instance = 0;
 
 Net::Net()
 {
 	socket.setBlocking(false);
+	socket.unbind();
+
+	// Try binding to anyport
+	if (socket.bind(Socket::AnyPort) != Socket::Done)
+	{
+		cout << "Unable to bind socket to port " << socket.getLocalPort() << endl;
+	}
+	else
+	{
+		localPort = socket.getLocalPort();
+		cout << "Sucessfully binded to port " << socket.getLocalPort() << endl;
+	}
 }
 
 Net::~Net()
@@ -12,43 +24,27 @@ Net::~Net()
 	socket.unbind();
 }
 
-void Net::Init()
+Net * Net::GetInstance()
 {
-	socket.unbind();
-
-	if (Net::IsPlayer1)
+	if (instance == 0)
 	{
-		localPort = p1Port;
-		remotePort = p2Port;
-	}
-	else
-	{
-		localPort = p2Port;
-		remotePort = p1Port;
+		instance = new Net();
 	}
 
-	if (socket.bind(localPort) != Socket::Done)
-	{
-		cout << "Unable to bind socket to port " << localPort << endl;
-	}
-	else
-	{
-		cout << "Sucessfully binded to port " << localPort << endl;
-	}
+	return instance;
 }
 
 void Net::Send(string message)
 {
-	Socket::Status s = socket.send(message.c_str(), 100, remoteIp, remotePort);
+	for (auto & remote : remotePlayers)
+	{
+		Socket::Status s = socket.send(message.c_str(), 100, remote.ip, remote.port);
 
-	if (s != sf::Socket::Done)
-	{
-		cout << "Was unable to send message: " << message << endl;
-		cout << "Socket status: " << s << endl;
-	}
-	else
-	{
-		//cout << "Send Message: " << message << endl;
+		if (s != sf::Socket::Done)
+		{
+			cout << "Was unable to send message to " << remote.ip << ":" << remote.port << endl;
+			cout << "Socket status: " << s << endl;
+		}
 	}
 }
 
@@ -67,12 +63,6 @@ vector<string> Net::Receive()
 		if (received > 0)
 			messages.push_back(data);
 	}
-
-	/*if (socket.receive(data, 100, received, sender, port) != Socket::NotReady)
-	{	
-		if (received > 0)
-			return data;
-	}*/
 
 	return messages;
 }

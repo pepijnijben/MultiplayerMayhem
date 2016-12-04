@@ -5,12 +5,12 @@ $username = "admin";
 $password = "pass";
 $dbname = "multiplayer_mayhem";
 
-if (!$_POST['id'])
+if (!$_POST['roomId'])
 {
-	die("Please provide id");
+	die("Please provide roomId");
 }
 
-$id = $_POST['id'];
+$roomId = $_POST['roomId'];
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -19,13 +19,10 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 } 
 
-$sql = "UPDATE rooms SET last_update='".date("Y-m-d H:i:s")."' WHERE owner=".$id;
-$conn->query($sql);
-
-$sql = "UPDATE players SET last_update='".date("Y-m-d H:i:s")."' WHERE id=".$id;
+$sql = "DELETE FROM rooms WHERE id=".$roomId;
 
 if ($conn->query($sql) === TRUE) {
-    echo "$id successfully checked in";
+	echo "1";
 } else {
     echo "Error: " . $sql . "<br>" . $conn->error;
 }

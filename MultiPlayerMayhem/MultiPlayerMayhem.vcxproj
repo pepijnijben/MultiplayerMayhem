@@ -136,13 +136,13 @@ copy /y ".\fonts\" "$(OutDir)fonts\"</Command>
     <ClCompile Include="Net.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RoomScene.cpp" />
-    <ClCompile Include="RoomUI.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="UICanvas.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APIHandler.h" />
+    <ClInclude Include="BasicTypes.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
@@ -156,7 +156,6 @@ copy /y ".\fonts\" "$(OutDir)fonts\"</Command>
     <ClInclude Include="Net.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RoomScene.h" />
-    <ClInclude Include="RoomUI.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="UICanvas.h" />

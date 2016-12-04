@@ -1,1 +1,2 @@
 * * * * * php /var/www/html/cleanPlayers.php 2>&1
+* * * * * php /var/www/html/cleanRooms.php 2>&1

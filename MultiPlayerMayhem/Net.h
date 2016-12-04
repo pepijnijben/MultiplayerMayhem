@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Network.hpp>
 #include <iostream>
+#include "APIHandler.h"
 
 using namespace std;
 using namespace sf;
@@ -8,20 +9,21 @@ using namespace sf;
 class Net 
 {
 private:
+	static Net * instance;
+
 	UdpSocket socket;
 	int localPort = 8081;
 
-	int p1Port = 8081;
-	int p2Port = 8082;
-	int remotePort = 8080;
-	IpAddress remoteIp = "127.0.0.1";
+	vector<NetPlayer> remotePlayers;
 public:
 	Net();
 	~Net();
-	void Init();
+
+	static Net * GetInstance();
+
 	void Send(string message);
 	vector<string> Receive();
 
-	// Temp value
-	static bool IsPlayer1;
+	int GetLocalPort() { return localPort; }
+	void SetRemotePlayers(vector<NetPlayer> rp) { remotePlayers = rp; }
 };

@@ -1,16 +1,56 @@
 #include "RoomScene.h"
-#include "Button.h"
+
+void OnStartButton(Button * caller)
+{
+	SceneManager::GetInstance()->SwitchTo("GAME");
+}
+
+void OnBackButton(Button * caller)
+{
+	if (APIHandler::GetInstance()->IsHost())
+	{
+		APIHandler::GetInstance()->removeRoom();
+	}
+
+	SceneManager::GetInstance()->SwitchTo("LOBBY");
+}
+
+void RoomScene::InitUI()
+{
+	Button * back = new Button(Vector2f(500, 100), "Back");
+	back->AddOnMouseDown(OnBackButton);
+
+	m_startGame = new Button(Vector2f(500, 50), "Start");
+	m_startGame->AddOnMouseDown(OnStartButton);
+	m_pInRoom = new ListBox(Vector2f(25, 25), Vector2f(150, 485));
+
+	m_gameObjects.push_back(m_startGame);
+	m_gameObjects.push_back(back);
+	m_gameObjects.push_back(m_pInRoom);
+}
+
+void RoomScene::UpdateUI(float deltaTime)
+{
+	m_currentTime += deltaTime;
+
+	if (m_currentTime >= m_updateListsTime)
+	{
+		m_pInRoom->CleanList();
+		vector<NetPlayer> players = APIHandler::GetInstance()->getRoomPlayers();
+		for (auto & item : players)
+		{
+			m_pInRoom->AddRow(item.name);
+		}
+
+		APIHandler::GetInstance()->checkInPlayer();
+		m_currentTime = 0.0f;
+	}
+}
 
 RoomScene::RoomScene() : Scene("ROOM")
 {
-	Button * StartGame = new Button(Vector2f(500, 50), "Start");
-
-	if (!APIHandler::GetInstance()->IsHost())
-	{
-		StartGame->SetActive(false);
-	}
-
-	m_gameObjects.push_back(StartGame);
+	m_net = Net::GetInstance();
+	InitUI();
 }
 
 void RoomScene::Update(float deltaTime)
@@ -20,7 +60,25 @@ void RoomScene::Update(float deltaTime)
 		obj->Update(deltaTime);
 	}
 
-	ui->Update(deltaTime);
+	UpdateUI(deltaTime);
+
+	vector<string> messages = m_net->Receive();
+
+	for (auto & s : messages)
+	{
+		if (s != "")
+		{
+			vector<string> values = DeserializeMessage(s);
+			
+			if (values[0] == "GAME")
+			{
+				if (values[1] == "STARTED")
+				{
+					SceneManager::GetInstance()->SwitchTo("GAME");
+				}
+			}
+		}
+	}
 }
 
 void RoomScene::Render(RenderWindow & r)
@@ -29,8 +87,6 @@ void RoomScene::Render(RenderWindow & r)
 	{
 		obj->Render(r);
 	}
-
-	ui->Render(r);
 }
 
 void RoomScene::Destroy()
@@ -40,4 +96,22 @@ void RoomScene::Destroy()
 
 void RoomScene::Enter()
 {
+	if (!APIHandler::GetInstance()->IsHost())
+	{
+		m_startGame->SetActive(false);
+	}
+}
+
+vector<string> RoomScene::DeserializeMessage(string message)
+{
+	size_t pos = 0;
+	string delimiter = ";";
+	vector<string> token;
+
+	while ((pos = message.find(delimiter)) != string::npos) {
+		token.push_back(message.substr(0, pos));
+		message.erase(0, pos + delimiter.length());
+	}
+
+	return token;
 }

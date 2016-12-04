@@ -10,7 +10,7 @@ struct NetPlayer
 {
 	NetPlayer() {};
 	string name;
-	string ip;
+	IpAddress ip;
 	int port;
 	int room_id;
 };
@@ -28,6 +28,7 @@ class APIHandler
 {
 private:
 	static APIHandler * instance;
+	string myName;
 	int me;
 	int currentRoom;
 	Http http;
@@ -42,11 +43,17 @@ public:
 	};
 	static APIHandler * GetInstance();
 
+	string GetName() { return myName; }
+
 	void newPlayer(string player, int port);
 	void checkInPlayer();
 	vector<NetPlayer> getPlayers();
+	vector<NetPlayer> getRoomPlayers();
+	vector<NetPlayer> getRoomOtherPlayers();
+	vector<NetPlayer> getRoomOtherPlayers(vector<NetPlayer> players);
 
 	void createRoom();
+	void removeRoom();
 	void joinRoom(int roomId);
 	vector<Room> getRooms();
 

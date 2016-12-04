@@ -7,9 +7,16 @@ Player::Player()
 	srand(time(NULL));
 
 	m_shape.setRadius(3.0f);
-	m_shape.setFillColor(Color(0, 0, 255));
+	m_shape.setFillColor(Color(64, 68, 253));
 	m_shape.setOrigin(3.0f, 3.0f);
+}
 
+Player::~Player()
+{
+}
+
+void Player::ResetPlayer()
+{
 	m_position.x = (rand() % 600) + 100;
 	m_position.y = (rand() % 400) + 100;
 
@@ -28,10 +35,6 @@ Player::Player()
 	}
 
 	setNewStopDrawingValues();
-}
-
-Player::~Player()
-{
 }
 
 void Player::Render(RenderWindow & r)
@@ -136,7 +139,7 @@ string Player::Serialize()
 {
 	ostringstream ss;
 
-	ss << "ENEMY" << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";";
+	ss << "ENEMY" << ";" << Name << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";";
 	return ss.str();
 }
 
