@@ -83,7 +83,7 @@ void APIHandler::newPlayer(string player, int port)
 	}
 	catch (exception e)
 	{
-		cout << "An error occured when logging into the lobby server: " << response.getBody() << endl;
+		cout << "An error occured when logging into the lobby server: " << response.getStatus() << endl;
 	}
 }
 
