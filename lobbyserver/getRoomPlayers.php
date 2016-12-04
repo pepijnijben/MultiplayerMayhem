@@ -53,5 +53,3 @@ foreach ($results as $row)
 {
 	echo $row["name"]. ";" . $row["room_id"]. ";" . $row["ip"]. ";" . $row["port"]. ";";
 }
-
-mysql_close($conn);
