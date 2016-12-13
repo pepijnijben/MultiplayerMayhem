@@ -4,6 +4,7 @@
 
 LobbyScene::LobbyScene() : Scene("LOBBY")
 {
+	m_receivedPing = false;
 	int port = Net::GetInstance()->GetLocalPort();
 	srand(time(NULL));
 	APIHandler::GetInstance()->newPlayer("p" + to_string(rand() % 5000), port);
@@ -12,6 +13,15 @@ LobbyScene::LobbyScene() : Scene("LOBBY")
 
 void LobbyScene::Update(float deltaTime)
 {
+	if (!m_receivedPing)
+	{
+		for (auto & message : Net::GetInstance()->Receive())
+		{
+			cout << "Received: " << message << endl;
+			m_receivedPing = true;
+		}
+	}
+
 	for (auto & obj : m_gameObjects)
 	{
 		obj->Update(deltaTime);

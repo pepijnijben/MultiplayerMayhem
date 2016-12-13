@@ -7,15 +7,15 @@ Net::Net()
 	socket.setBlocking(false);
 	socket.unbind();
 
-	// Try binding to anyport
-	if (socket.bind(Socket::AnyPort) != Socket::Done)
+	Socket::Status s = socket.send("UDPHolePunching", 100, "178.62.78.172", 54000);
+	if (s != Socket::Done)
 	{
-		cout << "Unable to bind socket to port " << socket.getLocalPort() << endl;
+		cout << "Was unable to send UDPHolePunching message" << endl;
 	}
 	else
 	{
 		localPort = socket.getLocalPort();
-		cout << "Sucessfully binded to port " << socket.getLocalPort() << endl;
+		cout << "Succesfully binded to port " << socket.getLocalPort() << endl;
 	}
 }
 

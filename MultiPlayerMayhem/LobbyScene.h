@@ -6,6 +6,7 @@ class LobbyScene : public Scene
 {
 private:
 	LobbyUI * ui;
+	bool m_receivedPing;
 public:
 	LobbyScene();
 
