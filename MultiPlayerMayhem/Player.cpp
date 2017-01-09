@@ -9,6 +9,8 @@ Player::Player()
 	m_shape.setRadius(3.0f);
 	m_shape.setFillColor(Color(64, 68, 253));
 	m_shape.setOrigin(3.0f, 3.0f);
+
+	m_isAlive = true;
 }
 
 Player::~Player()
@@ -17,6 +19,7 @@ Player::~Player()
 
 void Player::ResetPlayer()
 {
+	m_isAlive = true;
 	m_position.x = (rand() % 600) + 100;
 	m_position.y = (rand() % 400) + 100;
 
@@ -66,81 +69,93 @@ void Player::Render(RenderWindow & r)
 
 void Player::Update(float deltaTime)
 {
-	if (Keyboard::isKeyPressed(Keyboard::Right))
+	if (m_isAlive) // Only update if player is alive
 	{
-		if (m_velocity.x >= MAX_VELOCITY && m_velocity.y < MAX_VELOCITY) // go to down and right
+		if (Keyboard::isKeyPressed(Keyboard::Right))
 		{
-				m_velocity.y += TURN_RATE;
-		} 
-		else if (m_velocity.x > -MAX_VELOCITY && m_velocity.y >= MAX_VELOCITY) // go to down and left
-		{
-			m_velocity.x -= TURN_RATE;
-		}
-		else if (m_velocity.y > -MAX_VELOCITY && m_velocity.x <= -MAX_VELOCITY) // go to left and up
-		{
-			m_velocity.y -= TURN_RATE;
-		}
-		else if (m_velocity.y <= -MAX_VELOCITY && m_velocity.x < MAX_VELOCITY) // Right and Up
-		{
-			m_velocity.x += TURN_RATE;
-		}
-	}
-	else if (Keyboard::isKeyPressed(Keyboard::Left))
-	{
-		if (m_velocity.y <= -MAX_VELOCITY && m_velocity.x > -MAX_VELOCITY) // Left UP
-		{
-			m_velocity.x -= TURN_RATE;
-		} 
-		else if (m_velocity.y < MAX_VELOCITY && m_velocity.x <= -MAX_VELOCITY) // Left bottom
-		{
-			m_velocity.y += TURN_RATE;
-		}
-		else if (m_velocity.y >= MAX_VELOCITY && m_velocity.x < MAX_VELOCITY) // right bottom
-		{
-			m_velocity.x += TURN_RATE;
-		}
-		else if (m_velocity.y > -MAX_VELOCITY && m_velocity.x >= MAX_VELOCITY) // RIGHT TOP
-		{
-			m_velocity.y -= TURN_RATE;
-		}
-	}
-
-	currentTime += deltaTime * 1000; // so its millisecs not seconds
-
-	if (currentTime < nextStopDrawing)
-	{	
-		if (currentTick % 10 == 0)
-		{
-			if (m_tail.size() > 0 && !stopDrawing)
+			if (m_velocity.x >= MAX_VELOCITY && m_velocity.y < MAX_VELOCITY) // go to down and right
 			{
-				m_lines.at(m_lines.size() - 1).push_back(Line(m_tail.at(m_tail.size() - 1), m_position, m_shape.getFillColor()));
+					m_velocity.y += TURN_RATE;
+			} 
+			else if (m_velocity.x > -MAX_VELOCITY && m_velocity.y >= MAX_VELOCITY) // go to down and left
+			{
+				m_velocity.x -= TURN_RATE;
 			}
-
-			stopDrawing = false;
-
-			m_tail.push_back(Vector2f(m_position));
+			else if (m_velocity.y > -MAX_VELOCITY && m_velocity.x <= -MAX_VELOCITY) // go to left and up
+			{
+				m_velocity.y -= TURN_RATE;
+			}
+			else if (m_velocity.y <= -MAX_VELOCITY && m_velocity.x < MAX_VELOCITY) // Right and Up
+			{
+				m_velocity.x += TURN_RATE;
+			}
 		}
-		currentTick++;
+		else if (Keyboard::isKeyPressed(Keyboard::Left))
+		{
+			if (m_velocity.y <= -MAX_VELOCITY && m_velocity.x > -MAX_VELOCITY) // Left UP
+			{
+				m_velocity.x -= TURN_RATE;
+			} 
+			else if (m_velocity.y < MAX_VELOCITY && m_velocity.x <= -MAX_VELOCITY) // Left bottom
+			{
+				m_velocity.y += TURN_RATE;
+			}
+			else if (m_velocity.y >= MAX_VELOCITY && m_velocity.x < MAX_VELOCITY) // right bottom
+			{
+				m_velocity.x += TURN_RATE;
+			}
+			else if (m_velocity.y > -MAX_VELOCITY && m_velocity.x >= MAX_VELOCITY) // RIGHT TOP
+			{
+				m_velocity.y -= TURN_RATE;
+			}
+		}
+
+		currentTime += deltaTime * 1000; // so its millisecs not seconds
+
+		if (currentTime < nextStopDrawing)
+		{	
+			if (currentTick % 10 == 0)
+			{
+				if (m_tail.size() > 0 && !stopDrawing)
+				{
+					m_lines.at(m_lines.size() - 1).push_back(Line(m_tail.at(m_tail.size() - 1), m_position, m_shape.getFillColor()));
+				}
+
+				stopDrawing = false;
+
+				m_tail.push_back(Vector2f(m_position));
+			}
+			currentTick++;
+		}
+		else if (currentTime > nextStopDrawing + stopDrawingAfter)
+		{
+			setNewStopDrawingValues();
+			currentTick = 0;
+		}
+		else
+		{
+			stopDrawing = true;
+		}
+		m_position += m_velocity * deltaTime;
+		m_shape.setPosition(GetPosition());
 	}
-	else if (currentTime > nextStopDrawing + stopDrawingAfter)
-	{
-		setNewStopDrawingValues();
-		currentTick = 0;
-	}
-	else
-	{
-		stopDrawing = true;
-	}
-	m_position += m_velocity * deltaTime;
-	m_shape.setPosition(GetPosition());
 }
 
 string Player::Serialize()
 {
 	ostringstream ss;
 
-	ss << "ENEMY" << ";" << Name << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";";
+	ss << "PLAYER" << ";" << Name << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";";
 	return ss.str();
+}
+
+void Player::Deserialize(vector<string> token)
+{
+	cout << "Deserialize!" << endl;
+	if (token.at(2) == "DEAD")
+	{
+		m_isAlive = false;
+	}
 }
 
 Vector2f Player::normalize(const Vector2f& source)
@@ -158,4 +173,19 @@ void Player::setNewStopDrawingValues()
 	stopDrawingAfter = (rand() % 300) + 500;
 
 	m_lines.push_back(vector<Line>());
+}
+
+bool Player::CollidedWith(Vector2f pos)
+{
+	float radius = m_shape.getRadius();
+
+	for (auto& obj : m_tail)
+	{
+		if (circlesColliding(pos.x, pos.y, radius, obj.x, obj.y, radius))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "UICanvas.h"
+#include "Button.h"
 
 class GameUI : public UICanvas
 {

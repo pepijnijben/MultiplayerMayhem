@@ -13,6 +13,7 @@ private:
 	GameUI * ui;
 	Player * m_player;
 	vector<Enemy*> m_enemys;
+	bool m_isHost;
 public:
 	GameScene();
 

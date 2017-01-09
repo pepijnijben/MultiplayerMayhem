@@ -12,9 +12,10 @@ class Enemy : public GameObject
 		vector<Vector2f> m_tail;
 		vector<vector<Line>> m_lines;
 
+		bool m_isAlive;
+
 		bool stopDrawing = false;
 		int currentTick = 0;
-
 	public:
 		string Name;
 
@@ -25,4 +26,7 @@ class Enemy : public GameObject
 		void Update(float deltaTime) override;
 		void SetPosition(Vector2f pos) override;
 		void Deserialize(vector<string> token);
+		bool CollidedWith(Vector2f pos);
+		bool IsAlive() { return m_isAlive; }
+		void IsAlive(bool val) { m_isAlive = val; }
 };

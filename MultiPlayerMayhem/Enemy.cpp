@@ -4,6 +4,7 @@
 
 Enemy::Enemy()
 {
+	m_isAlive = true;
 	m_shape.setRadius(3.0f);
 
 	int r = rand() % cols_left.size();
@@ -69,7 +70,11 @@ void Enemy::SetPosition(Vector2f pos)
 
 void Enemy::Deserialize(vector<string> token)
 {
-	if (token.size() >= 5)
+	if (token.at(2) == "DEAD")
+	{
+		m_isAlive = false;
+	}
+	else if (token.size() >= 5)
 	{
 		float x = stof(token.at(2));
 		float y = stof(token.at(3));
@@ -97,4 +102,19 @@ void Enemy::Deserialize(vector<string> token)
 		m_shape.setPosition(Vector2f(x, y));
 		currentTick++;
 	}
+}
+
+bool Enemy::CollidedWith(Vector2f pos)
+{
+	float radius = m_shape.getRadius();
+
+	for (auto& obj : m_tail)
+	{
+		if (circlesColliding(pos.x, pos.y, radius, obj.x, obj.y, radius))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

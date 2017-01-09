@@ -1,6 +1,5 @@
 #include "GameUI.h"
-#include "Button.h"
-#include "GameScene.h"
+#include "APIHandler.h"
 #include <iostream>
 
 GameUI::GameUI()
