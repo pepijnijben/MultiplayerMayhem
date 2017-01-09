@@ -4,6 +4,7 @@
 #include "GameScene.h"
 #include "LobbyScene.h"
 #include "RoomScene.h"
+#include "ThreadPool.h"
 
 const int MAX_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / MAX_FPS;
@@ -17,6 +18,15 @@ Game::Game()
 
 Game::~Game()
 {
+}
+
+void OnThread()
+{
+	for (int i = 0; i < 10; i++)
+	{
+		cout << i << endl;
+		sf::sleep(sf::milliseconds(1000));
+	}
 }
 
 bool Game::init()

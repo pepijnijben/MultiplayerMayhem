@@ -1,4 +1,5 @@
 #include "RoomScene.h"
+#include "ThreadPool.h"
 
 void OnStartButton(Button * caller)
 {
@@ -13,6 +14,18 @@ void OnBackButton(Button * caller)
 	}
 
 	SceneManager::GetInstance()->SwitchTo("LOBBY");
+}
+
+void RoomScene::updateRoomList()
+{
+	mutexRooms.lock();
+	vector<NetPlayer> players = APIHandler::GetInstance()->getRoomPlayers();
+	m_pInRoom->CleanList();
+	for (auto & item : players)
+	{
+		m_pInRoom->AddRow(item.name);
+	}
+	mutexRooms.unlock();
 }
 
 void RoomScene::InitUI()
@@ -35,14 +48,8 @@ void RoomScene::UpdateUI(float deltaTime)
 
 	if (m_currentTime >= m_updateListsTime)
 	{
-		m_pInRoom->CleanList();
-		vector<NetPlayer> players = APIHandler::GetInstance()->getRoomPlayers();
-		for (auto & item : players)
-		{
-			m_pInRoom->AddRow(item.name);
-		}
-
-		APIHandler::GetInstance()->checkInPlayer();
+		ThreadPool::GetInstance()->AddJob(bind(&RoomScene::updateRoomList, this));
+		ThreadPool::GetInstance()->AddJob(bind(&APIHandler::checkInPlayer, APIHandler::GetInstance()));
 		m_currentTime = 0.0f;
 	}
 }
@@ -55,10 +62,12 @@ RoomScene::RoomScene() : Scene("ROOM")
 
 void RoomScene::Update(float deltaTime)
 {
+	mutexRooms.lock();
 	for (auto & obj : m_gameObjects)
 	{
 		obj->Update(deltaTime);
 	}
+	mutexRooms.unlock();
 
 	UpdateUI(deltaTime);
 

@@ -1,6 +1,7 @@
 #include "GameUI.h"
 #include "APIHandler.h"
 #include <iostream>
+#include "ThreadPool.h"
 
 GameUI::GameUI()
 {
@@ -17,7 +18,7 @@ void GameUI::Update(float deltaTime)
 
 	if (m_currentTime >= m_updateListsTime)
 	{
-		APIHandler::GetInstance()->checkInPlayer();
+		ThreadPool::GetInstance()->AddJob(bind(&APIHandler::checkInPlayer, APIHandler::GetInstance()));
 		m_currentTime = 0.0f;
 	}
 }

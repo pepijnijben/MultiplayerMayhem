@@ -4,6 +4,7 @@
 #include "APIHandler.h"
 #include "Net.h"
 #include "Button.h"
+#include "SFML/System.hpp"
 
 class RoomScene : public Scene
 {
@@ -11,6 +12,9 @@ private:
 	ListBox * m_pInRoom;
 	Net * m_net;
 	Button * m_startGame;
+
+	sf::Mutex mutexRooms;
+	void updateRoomList();
 
 	float m_updateListsTime = 1.0f;
 	float m_currentTime = 0.0f;

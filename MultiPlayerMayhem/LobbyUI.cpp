@@ -2,6 +2,7 @@
 #include "Button.h"
 #include "SceneManager.h"
 #include "Net.h"
+#include "ThreadPool.h"
 
 void OnCreateRoom(Button * caller)
 {
@@ -9,7 +10,31 @@ void OnCreateRoom(Button * caller)
 	SceneManager::GetInstance()->SwitchTo("ROOM");
 }
 
-LobbyUI::LobbyUI() 
+void LobbyUI::updateLobbyList()
+{
+	mutexLobby.lock();
+	vector<NetPlayer> players = APIHandler::GetInstance()->getPlayers();
+	m_pInLobby->CleanList();
+	for (auto & item : players)
+	{
+		m_pInLobby->AddRow(item.name);
+	}
+	mutexLobby.unlock();
+}
+
+void LobbyUI::updateRoomList()
+{
+	mutexRooms.lock();
+	m_roomVector = APIHandler::GetInstance()->getRooms();
+	m_rooms->CleanList();
+	for (auto & item : m_roomVector)
+	{
+		m_rooms->AddRow(item.name);
+	}
+	mutexRooms.unlock();
+}
+
+LobbyUI::LobbyUI()
 {
 	// Create room button
 	Button * createRoom = new Button(Vector2f(100, 555), "Create Room");
@@ -31,27 +56,20 @@ LobbyUI::~LobbyUI()
 
 void LobbyUI::Update(float deltaTime)
 {
+	mutexLobby.lock();
+	mutexRooms.lock();
 	UICanvas::Update(deltaTime);
+	mutexLobby.unlock();
+	mutexRooms.unlock();
 
 	m_currentTime += deltaTime;
 
 	if (m_currentTime >= m_updateListsTime)
 	{
-		m_pInLobby->CleanList();
+		ThreadPool::GetInstance()->AddJob(bind(&LobbyUI::updateLobbyList, this));
+		ThreadPool::GetInstance()->AddJob(bind(&LobbyUI::updateRoomList, this));
 
-		for (auto & item : APIHandler::GetInstance()->getPlayers())
-		{
-			m_pInLobby->AddRow(item.name);
-		}
-
-		m_rooms->CleanList();
-		m_roomVector = APIHandler::GetInstance()->getRooms();
-		for (auto & item : m_roomVector)
-		{
-			m_rooms->AddRow(item.name);
-		}
-
-		APIHandler::GetInstance()->checkInPlayer();
+		ThreadPool::GetInstance()->AddJob(bind(&APIHandler::checkInPlayer, APIHandler::GetInstance()));
 
 		m_currentTime = 0.0f;
 	}

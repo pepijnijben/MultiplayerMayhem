@@ -86,7 +86,6 @@ void Enemy::Deserialize(vector<string> token)
 			m_lines.push_back(vector<Line>());
 		}
 
-
 		if (currentTick % 10 == 0)
 		{
 			SetPosition(Vector2f(x, y));
