@@ -38,9 +38,9 @@ private:
 public:
 	APIHandler()
 	{
-		//http.setHost("http://pepijn.pw/");
+		http.setHost("http://pepijn.pw/");
 		//http.setHost("http://docker.local/");
-		http.setHost("http://lobby.server/");
+		//http.setHost("http://lobby.server/");
 	};
 	static APIHandler * GetInstance();
 
