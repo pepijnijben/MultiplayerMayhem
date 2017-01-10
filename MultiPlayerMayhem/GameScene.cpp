@@ -77,18 +77,24 @@ void GameScene::Update(float deltaTime)
 		if (m_isHost)
 		{
 			ostringstream ss;
+
+			// Check if player is outside of the bounds
+			if (m_player->GetPosition().x > 800 || m_player->GetPosition().x < 0 || m_player->GetPosition().y < 0 || m_player->GetPosition().y > 600)
+			{
+				ss << "PLAYER;" << m_player->Name << ";DEAD;";
+				net->Send(ss.str());
+				m_player->IsAlive(false);
+			}
+
 			int playersAlive = m_player->IsAlive() ? 1 : 0;
 			// Checkcollisions
 			for (auto& e1 : m_enemys)
 			{
-				if (e1->IsAlive())
-				{
-					playersAlive++;
-				}
-
 				// Check if local player collided with e1
 				if (m_player->IsAlive() && e1->CollidedWith(m_player->GetPosition()))
 				{
+					ss.str("");
+					ss.clear();
 					ss << "PLAYER;" << m_player->Name << ";DEAD;";
 					net->Send(ss.str());
 					m_player->IsAlive(false);
@@ -119,6 +125,24 @@ void GameScene::Update(float deltaTime)
 						}
 					}
 				}
+
+				if (e1->IsAlive())
+				{
+					// Check if player is outside of the bounds
+					if (e1->GetPosition().x > 800 || e1->GetPosition().x < 0 || e1->GetPosition().y < 0 || e1->GetPosition().y > 600)
+					{
+						ss.str("");
+						ss.clear();
+						ss << "PLAYER;" << e1->Name << ";DEAD;";
+						net->Send(ss.str());
+						e1->IsAlive(false);
+					}
+					else
+					{
+						playersAlive++;
+					}
+				}
+
 			} // End checkcollisions
 
 			// Round is over cuz one player won!
