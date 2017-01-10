@@ -18,8 +18,8 @@ void OnBackButton(Button * caller)
 
 void RoomScene::updateRoomList()
 {
-	mutexRooms.lock();
 	vector<NetPlayer> players = APIHandler::GetInstance()->getRoomPlayers();
+	mutexRooms.lock();
 	m_pInRoom->CleanList();
 	for (auto & item : players)
 	{

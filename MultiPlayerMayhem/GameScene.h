@@ -14,6 +14,8 @@ private:
 	Player * m_player;
 	vector<Enemy*> m_enemys;
 	bool m_isHost;
+
+	void ResetRound();
 public:
 	GameScene();
 

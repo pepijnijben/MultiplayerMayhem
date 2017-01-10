@@ -145,7 +145,7 @@ vector<NetPlayer> APIHandler::getRoomOtherPlayers(vector<NetPlayer> players)
 	return newPlayers;
 }
 
-void APIHandler::createRoom()
+bool APIHandler::createRoom()
 {
 	ostringstream ss;
 
@@ -159,11 +159,12 @@ void APIHandler::createRoom()
 	try
 	{
 		cout << "Successfully created room " << response.getBody() << endl;
-		joinRoom(stoi(response.getBody()));
+		return joinRoom(stoi(response.getBody()));
 	}
 	catch (exception e)
 	{
 		cout << "An error occured when creating a new room: " << response.getBody() << endl;
+		return false;
 	}
 }
 
@@ -180,11 +181,11 @@ void APIHandler::removeRoom()
 	currentRoom = -1;
 }
 
-void APIHandler::joinRoom(int roomId)
+bool APIHandler::joinRoom(int roomId)
 {
 	if (currentRoom == roomId)
 	{
-		return;
+		return true;
 	}
 
 	ostringstream ss;
@@ -204,7 +205,10 @@ void APIHandler::joinRoom(int roomId)
 	catch (exception e)
 	{
 		cout << "An error occured when joining a room: " << response.getBody() << endl;
+		return false;
 	}
+
+	return true;
 }
 
 vector<Room> APIHandler::getRooms()

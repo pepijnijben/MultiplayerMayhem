@@ -53,9 +53,9 @@ public:
 	vector<NetPlayer> getRoomOtherPlayers();
 	vector<NetPlayer> getRoomOtherPlayers(vector<NetPlayer> players);
 
-	void createRoom();
+	bool createRoom();
 	void removeRoom();
-	void joinRoom(int roomId);
+	bool joinRoom(int roomId);
 	vector<Room> getRooms();
 
 	bool IsHost();

@@ -27,6 +27,7 @@ class Enemy : public GameObject
 		void SetPosition(Vector2f pos) override;
 		void Deserialize(vector<string> token);
 		bool CollidedWith(Vector2f pos);
+		void ResetEnemy();
 		bool IsAlive() { return m_isAlive; }
 		void IsAlive(bool val) { m_isAlive = val; }
 };

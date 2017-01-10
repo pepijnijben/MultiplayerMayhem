@@ -1,2 +1,7 @@
 * * * * * php /var/www/html/cleanPlayers.php 2>&1
 * * * * * php /var/www/html/cleanRooms.php 2>&1
+
+/usr/share/nginx/html/multiplayer
+
+* * * * * php /usr/share/nginx/html/multiplayer/cleanPlayers.php 2>&1
+* * * * * php /usr/share/nginx/html/multiplayer/cleanRooms.php 2>&1

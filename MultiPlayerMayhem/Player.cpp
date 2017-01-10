@@ -20,6 +20,7 @@ Player::~Player()
 void Player::ResetPlayer()
 {
 	m_isAlive = true;
+	stopDrawing = false;
 	m_position.x = (rand() % 600) + 100;
 	m_position.y = (rand() % 400) + 100;
 
@@ -36,6 +37,11 @@ void Player::ResetPlayer()
 		m_velocity.x = (rand() % (int)(MAX_VELOCITY * 2)) - MAX_VELOCITY;
 		m_velocity.y = rand() % 2 ? MAX_VELOCITY : -MAX_VELOCITY;
 	}
+
+	m_tail.clear();
+	m_tail.shrink_to_fit();
+	m_lines.clear();
+	m_lines.shrink_to_fit();
 
 	setNewStopDrawingValues();
 }
@@ -151,7 +157,6 @@ string Player::Serialize()
 
 void Player::Deserialize(vector<string> token)
 {
-	cout << "Deserialize!" << endl;
 	if (token.at(2) == "DEAD")
 	{
 		m_isAlive = false;

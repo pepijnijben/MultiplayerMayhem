@@ -117,3 +117,16 @@ bool Enemy::CollidedWith(Vector2f pos)
 
 	return false;
 }
+
+void Enemy::ResetEnemy()
+{
+	m_isAlive = true;
+	stopDrawing = false;
+
+	m_tail.clear();
+	m_tail.shrink_to_fit();
+	m_lines.clear();
+	m_lines.shrink_to_fit();
+
+	m_lines.push_back(vector<Line>());
+}

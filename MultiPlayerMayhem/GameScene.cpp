@@ -3,6 +3,16 @@
 
 bool GameScene::IsStarted = false;
 
+void GameScene::ResetRound()
+{
+	for (auto & enemy : m_enemys)
+	{
+		enemy->ResetEnemy();
+	}
+
+	m_player->ResetPlayer();
+}
+
 GameScene::GameScene() : Scene("GAME")
 {
 	net = Net::GetInstance();
@@ -48,6 +58,10 @@ void GameScene::Update(float deltaTime)
 					net->Send("GAME;STARTED;");
 					IsStarted = true;
 				}
+				else if (values[1] == "RESET")
+				{
+					ResetRound();
+				}
 			}
 		}
 	}
@@ -63,22 +77,26 @@ void GameScene::Update(float deltaTime)
 		if (m_isHost)
 		{
 			ostringstream ss;
+			int playersAlive = m_player->IsAlive() ? 1 : 0;
 			// Checkcollisions
 			for (auto& e1 : m_enemys)
 			{
+				if (e1->IsAlive())
+				{
+					playersAlive++;
+				}
+
 				// Check if local player collided with e1
 				if (m_player->IsAlive() && e1->CollidedWith(m_player->GetPosition()))
 				{
-					// localplayer to dead and send everyone the message he is dead
-					cout << m_player->Name << " Collided with " << e1->Name << endl;
 					ss << "PLAYER;" << m_player->Name << ";DEAD;";
 					net->Send(ss.str());
 					m_player->IsAlive(false);
 				}
 				if (e1->IsAlive() && m_player->CollidedWith(e1->GetPosition()))
 				{
-					// e1 is dead and send everyone the message he is dead
-					cout << e1->Name << " Collided with " << m_player->Name << endl;
+					ss.str("");
+					ss.clear();
 					ss << "PLAYER;" << e1->Name << ";DEAD;";
 					net->Send(ss.str());
 					e1->IsAlive(false);
@@ -92,8 +110,8 @@ void GameScene::Update(float deltaTime)
 						// if e1 collided with e2 he is dead
 						if (e2->CollidedWith(e1->GetPosition()))
 						{
-							// Set e1 to dead and send e1 message that he is dead
-							cout << e1->Name << " Collided with " << e2->Name << endl;
+							ss.str("");
+							ss.clear();
 							ss << "PLAYER;" << e1->Name << ";DEAD;";
 							net->Send(ss.str());
 							e1->IsAlive(false);
@@ -102,6 +120,18 @@ void GameScene::Update(float deltaTime)
 					}
 				}
 			} // End checkcollisions
+
+			// Round is over cuz one player won!
+			if (playersAlive <= 1)
+			{
+				ss.str("");
+				ss.clear();
+
+				ss << "GAME;RESET;";
+				net->Send(ss.str());
+
+				ResetRound();
+			}
 		} // End Authoritive host
 	} // End IsStarted
 
@@ -127,6 +157,10 @@ void GameScene::Destroy()
 void GameScene::Enter()
 {
 	m_isHost = APIHandler::GetInstance()->IsHost();
+
+	if (m_isHost)
+		cout << "Im the host" << endl;
+
 	m_player->ResetPlayer();
 	m_player->Name = APIHandler::GetInstance()->GetName();
 	vector<NetPlayer> enemys = APIHandler::GetInstance()->getRoomOtherPlayers();

@@ -6,14 +6,16 @@
 
 void OnCreateRoom(Button * caller)
 {
-	APIHandler::GetInstance()->createRoom();
-	SceneManager::GetInstance()->SwitchTo("ROOM");
+	if (APIHandler::GetInstance()->createRoom())
+	{
+		SceneManager::GetInstance()->SwitchTo("ROOM");
+	}
 }
 
 void LobbyUI::updateLobbyList()
 {
-	mutexLobby.lock();
 	vector<NetPlayer> players = APIHandler::GetInstance()->getPlayers();
+	mutexLobby.lock();
 	m_pInLobby->CleanList();
 	for (auto & item : players)
 	{
@@ -24,8 +26,8 @@ void LobbyUI::updateLobbyList()
 
 void LobbyUI::updateRoomList()
 {
-	mutexRooms.lock();
 	m_roomVector = APIHandler::GetInstance()->getRooms();
+	mutexRooms.lock();
 	m_rooms->CleanList();
 	for (auto & item : m_roomVector)
 	{
@@ -76,7 +78,9 @@ void LobbyUI::Update(float deltaTime)
 
 	if (m_rooms->IsPressed())
 	{
-		APIHandler::GetInstance()->joinRoom(m_roomVector[m_rooms->CurrentSelected()].id);
-		SceneManager::GetInstance()->SwitchTo("ROOM");
+		if (APIHandler::GetInstance()->joinRoom(m_roomVector[m_rooms->CurrentSelected()].id))
+		{
+			SceneManager::GetInstance()->SwitchTo("ROOM");
+		}
 	}
 }
