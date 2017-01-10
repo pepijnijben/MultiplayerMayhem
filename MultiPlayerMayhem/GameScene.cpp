@@ -15,6 +15,7 @@ void GameScene::ResetRound()
 
 GameScene::GameScene() : Scene("GAME")
 {
+	currentTime = 0.0f;
 	net = Net::GetInstance();
 
 	m_player = new Player();
@@ -25,6 +26,8 @@ GameScene::GameScene() : Scene("GAME")
 
 void GameScene::Update(float deltaTime)
 {
+	currentTime += deltaTime;
+
 	// Send and Receive messages
 	vector<string> messages = net->Receive();
 	net->Send(m_player->Serialize());
@@ -53,7 +56,7 @@ void GameScene::Update(float deltaTime)
 			}
 			else if (values[0] == "GAME")
 			{
-				if (values[1] == "STARTED")
+				if (values[1] == "STARTED" && !IsStarted)
 				{
 					net->Send("GAME;STARTED;");
 					IsStarted = true;
@@ -61,6 +64,41 @@ void GameScene::Update(float deltaTime)
 				else if (values[1] == "RESET")
 				{
 					ResetRound();
+				}
+				else if (values[1] == "TIME")
+				{
+					if (values[2] == m_player->Name)
+					{
+						currentTime = stof(values[3]);
+					}
+				} 
+				else if (values[1] == "PING")
+				{
+					if (values[2] == m_player->Name)
+					{
+						ostringstream ss;
+						ss << "GAME;PINGRETURNED;" << m_player->Name << ";" << values[3] << ";";
+						net->Send(ss.str());
+					}
+				}
+				else if (m_isHost && values[1] == "PINGRETURNED")
+				{
+					m_pingmsg[values[2]][stoi(values[3]) + 10] = currentTime;
+
+					if (m_pingmsg[values[2]].size() >= 20)
+					{
+						float totalSum = 0;
+						for (int i = 0; i < 10; i++)
+						{
+							totalSum += m_pingmsg[values[2]][i + 10] - m_pingmsg[values[2]][i];
+						}
+
+						ostringstream ss;
+						ss << "GAME;TIME;" << values[2] << ";" << currentTime + (totalSum / 10.0f) << ";";
+						net->Send(ss.str());
+
+						m_pingmsg.erase(values[2]);
+					}
 				}
 			}
 		}
@@ -158,6 +196,14 @@ void GameScene::Update(float deltaTime)
 			}
 		} // End Authoritive host
 	} // End IsStarted
+	else
+	{
+		if (m_pingmsg.size() <= 0)
+		{
+			net->Send("GAME;STARTED;");
+			IsStarted = true;
+		}
+	}
 
 	ui->Update(deltaTime);
 }
@@ -182,23 +228,34 @@ void GameScene::Enter()
 {
 	m_isHost = APIHandler::GetInstance()->IsHost();
 
-	if (m_isHost)
-		cout << "Im the host" << endl;
-
 	m_player->ResetPlayer();
 	m_player->Name = APIHandler::GetInstance()->GetName();
 	vector<NetPlayer> enemys = APIHandler::GetInstance()->getRoomOtherPlayers();
 	net->SetRemotePlayers(enemys);
 
-	for (auto & enemy : enemys)
+	if (m_isHost)
 	{
-		Enemy * m_enemy = new Enemy();
-		m_enemy->Name = enemy.name;
-		m_gameObjects.push_back(m_enemy);
-		m_enemys.push_back(m_enemy);
+		cout << "Im the host" << endl;
+		net->Send("GAME;STARTED;");
+		for (auto & enemy : enemys)
+		{
+			Enemy * m_enemy = new Enemy();
+			m_enemy->Name = enemy.name;
+			m_gameObjects.push_back(m_enemy);
+			m_enemys.push_back(m_enemy);
+
+			m_pingmsg[enemy.name] = map<int, float>();
+		
+			for (int i = 0; i < 10; i++)
+			{
+				ostringstream ss;
+				ss << "GAME;PING;" << enemy.name << ";" << i << ";";
+				m_pingmsg[enemy.name][i] = currentTime;
+				net->Send(ss.str());
+			}
+		}
 	}
 
-	net->Send("GAME;STARTED;");
 }
 
 vector<string> GameScene::DeserializeMessage(string message)

@@ -7,6 +7,8 @@ Net::Net()
 	socket.setBlocking(false);
 	socket.unbind();
 
+	// Uncommend this to play in the lab with other pc's
+	//socket.bind(5228);
 	Socket::Status s = socket.send("UDPHolePunching", 100, "178.62.78.172", 54000);
 	if (s != Socket::Done)
 	{
@@ -46,6 +48,8 @@ void Net::Send(string message)
 			cout << "Socket status: " << s << endl;
 		}
 	}
+
+	cout << "Sending: " << message << endl;
 }
 
 vector<string> Net::Receive()

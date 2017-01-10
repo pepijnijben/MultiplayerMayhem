@@ -15,6 +15,9 @@ private:
 	vector<Enemy*> m_enemys;
 	bool m_isHost;
 
+	float currentTime;
+	map<string, map<int, float>> m_pingmsg;
+
 	void ResetRound();
 public:
 	GameScene();
