@@ -10,26 +10,11 @@ void GameScene::ResetRound()
 	}
 
 	m_player->ResetPlayer();
-
-	cout << m_enemys.size() << endl;
+	m_counter->Start();
 }
 
-GameScene::GameScene() : Scene("GAME")
+void GameScene::HandleMessages()
 {
-	currentTime = 0.0f;
-	net = Net::GetInstance();
-
-	m_player = new Player();
-	m_gameObjects.push_back(m_player);
-
-	ui = new GameUI();
-}
-
-void GameScene::Update(float deltaTime)
-{
-	currentTime += deltaTime;
-	ui->GameTime = currentTime;
-
 	// Send and Receive messages
 	vector<string> messages = net->Receive();
 
@@ -64,11 +49,14 @@ void GameScene::Update(float deltaTime)
 			{
 				if (values[1] == "STARTED" && !IsStarted)
 				{
-					net->Send("GAME;STARTED;");
+					cout << "Received started MESSAGE!" << endl;
 					IsStarted = true;
+					m_counter->SetStartTime(3.0f - (currentTime - stof(values[2])));
+					m_counter->Start();
 				}
 				else if (values[1] == "RESET")
 				{
+					m_counter->SetStartTime(3.0f - (currentTime - stof(values[2])));
 					ResetRound();
 				}
 				else if (values[1] == "TIME")
@@ -85,13 +73,15 @@ void GameScene::Update(float deltaTime)
 					}
 					else if (values[2] == m_player->Name)
 					{
+						cout << "Retrieved the time " << endl;
 						currentTime = stof(values[3]);
 					}
-				} 
+				}
 				else if (values[1] == "PING")
 				{
 					if (values[2] == m_player->Name)
 					{
+						cout << "Retrieved PING message " << endl;
 						ostringstream ss;
 						ss << "GAME;PINGRETURNED;" << m_player->Name << ";" << values[3] << ";";
 						net->Send(ss.str());
@@ -119,8 +109,11 @@ void GameScene::Update(float deltaTime)
 			}
 		}
 	}
+}
 
-	if (IsStarted)
+void GameScene::HostOperations(float deltaTime)
+{
+	if (IsStarted && m_counter->IsFinnished())
 	{
 		for (auto& obj : m_gameObjects)
 		{
@@ -199,28 +192,52 @@ void GameScene::Update(float deltaTime)
 
 			} // End checkcollisions
 
-			// Round is over cuz one player won!
+			  // Round is over cuz one player won!
 			if (playersAlive <= 1)
 			{
 				ss.str("");
 				ss.clear();
 
-				ss << "GAME;RESET;";
+				ss << "GAME;RESET;" << currentTime << ";";
 				net->Send(ss.str());
-
 				ResetRound();
 			}
 		} // End Authoritive host
 	} // End IsStarted
 	else if (m_isHost)
 	{
-		if (m_pingmsg.size() <= 0)
+		if (m_pingmsg.size() <= 0 && !IsStarted)
 		{
-			net->Send("GAME;STARTED;");
+			ostringstream ss;
+			ss << "GAME;STARTED;" << currentTime << ";";
+			net->Send(ss.str());
 			IsStarted = true;
+			m_counter->Start();
 		}
 	}
+}
 
+GameScene::GameScene() : Scene("GAME")
+{
+	m_counter = new Countdown(3.0f);
+	currentTime = 0.0f;
+	net = Net::GetInstance();
+
+	m_player = new Player();
+	m_gameObjects.push_back(m_player);
+	//m_gameObjects.push_back(m_counter);
+
+	ui = new GameUI();
+}
+
+void GameScene::Update(float deltaTime)
+{
+	currentTime += deltaTime;
+	ui->Counter = m_counter->CurrentTime();
+
+	HandleMessages();
+	HostOperations(deltaTime);
+	m_counter->Update(deltaTime);
 	ui->Update(deltaTime);
 }
 

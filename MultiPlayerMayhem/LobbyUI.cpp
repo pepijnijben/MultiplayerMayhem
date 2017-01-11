@@ -8,6 +8,7 @@ void OnCreateRoom(Button * caller)
 {
 	if (APIHandler::GetInstance()->createRoom())
 	{
+		APIHandler::HOST = true;
 		SceneManager::GetInstance()->SwitchTo("ROOM");
 	}
 }

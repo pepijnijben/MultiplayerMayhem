@@ -32,9 +32,9 @@ void GameUI::Render(sf::RenderWindow & r)
 {
 	UICanvas::Render(r);
 
-	Text title = Text(to_string(GameTime), m_font, 25);
-	title.setPosition(Vector2f(100,100));
-	title.setStyle(sf::Text::Regular);
+	Text title = Text(Counter, m_font, 50);
+	title.setPosition(Vector2f(375,275));
+	title.setStyle(sf::Text::Bold);
 	title.setFillColor(Color::White);
 
 	r.draw(title);

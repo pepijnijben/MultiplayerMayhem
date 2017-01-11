@@ -10,6 +10,7 @@ void OnBackButton(Button * caller)
 {
 	if (APIHandler::GetInstance()->IsHost())
 	{
+		APIHandler::HOST = false;
 		APIHandler::GetInstance()->removeRoom();
 	}
 

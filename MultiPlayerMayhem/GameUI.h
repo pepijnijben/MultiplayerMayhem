@@ -15,5 +15,5 @@ public:
 	void Update(float deltaTime) override;
 	void Render(sf::RenderWindow & r) override;
 
-	float GameTime = 0.0f;
+	string Counter = "";
 };

@@ -5,6 +5,7 @@
 #include "Net.h"
 #include "Button.h"
 #include "GameUI.h"
+#include "Countdown.h"
 
 class GameScene : public Scene
 {
@@ -15,10 +16,13 @@ private:
 	vector<Enemy*> m_enemys;
 	bool m_isHost;
 
+	Countdown * m_counter;
 	float currentTime;
 	map<string, map<int, float>> m_pingmsg;
 
 	void ResetRound();
+	void HandleMessages();
+	void HostOperations(float deltaTime);
 public:
 	GameScene();
 

@@ -36,6 +36,7 @@ private:
 	vector<NetPlayer> DeserializePlayers(string message);
 	vector<Room> DeserializeRooms(string message);
 public:
+	static bool HOST;
 	APIHandler()
 	{
 		http.setHost("http://pepijn.pw/");

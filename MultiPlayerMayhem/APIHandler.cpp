@@ -1,6 +1,7 @@
 #include "APIHandler.h"
 
 APIHandler * APIHandler::instance = 0;
+bool APIHandler::HOST = false;
 
 vector<NetPlayer> APIHandler::DeserializePlayers(string message)
 {
@@ -137,7 +138,6 @@ vector<NetPlayer> APIHandler::getRoomOtherPlayers(vector<NetPlayer> players)
 	{
 		if (player.name != myName)
 		{
-			cout << player.name << " : " << myName << endl;
 			newPlayers.push_back(player);
 		}
 	}
@@ -224,7 +224,14 @@ vector<Room> APIHandler::getRooms()
 
 bool APIHandler::IsHost()
 {
-	for(auto& obj : getRooms())
+	/*auto rooms = getRooms();
+
+	if(rooms.size() <= 0)
+	{
+		cout << "An error occured when trying to retrieve the rooms information" << endl;
+	}
+
+	for(auto& obj : rooms)
 	{
 		if (obj.id == currentRoom)
 		{
@@ -237,5 +244,6 @@ bool APIHandler::IsHost()
 		}
 	}
 
-	return false;
+	return false;*/
+	return HOST;
 }
