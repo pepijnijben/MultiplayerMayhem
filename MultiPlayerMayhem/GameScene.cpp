@@ -1,5 +1,4 @@
 #include "GameScene.h"
-#include "GameUI.h"
 
 bool GameScene::IsStarted = false;
 
@@ -11,6 +10,8 @@ void GameScene::ResetRound()
 	}
 
 	m_player->ResetPlayer();
+
+	cout << m_enemys.size() << endl;
 }
 
 GameScene::GameScene() : Scene("GAME")
@@ -27,10 +28,15 @@ GameScene::GameScene() : Scene("GAME")
 void GameScene::Update(float deltaTime)
 {
 	currentTime += deltaTime;
+	ui->GameTime = currentTime;
 
 	// Send and Receive messages
 	vector<string> messages = net->Receive();
-	net->Send(m_player->Serialize());
+
+	if (m_player->IsAlive())
+	{
+		net->Send(m_player->Serialize());
+	}
 
 	for (auto & s : messages)
 	{
@@ -67,7 +73,17 @@ void GameScene::Update(float deltaTime)
 				}
 				else if (values[1] == "TIME")
 				{
-					if (values[2] == m_player->Name)
+					if (m_isHost)
+					{
+						for (int i = 0; i < 10; i++)
+						{
+							ostringstream ss;
+							ss << "GAME;PING;" << values[2] << ";" << i << ";";
+							m_pingmsg[values[2]][i] = currentTime;
+							net->Send(ss.str(), values[2]);
+						}
+					}
+					else if (values[2] == m_player->Name)
 					{
 						currentTime = stof(values[3]);
 					}
@@ -94,8 +110,8 @@ void GameScene::Update(float deltaTime)
 						}
 
 						ostringstream ss;
-						ss << "GAME;TIME;" << values[2] << ";" << currentTime + (totalSum / 10.0f) << ";";
-						net->Send(ss.str());
+						ss << "GAME;TIME;" << values[2] << ";" << currentTime + ((totalSum / 10.0f) * 0.5f) << ";";
+						net->Send(ss.str(), values[2]);
 
 						m_pingmsg.erase(values[2]);
 					}
@@ -196,7 +212,7 @@ void GameScene::Update(float deltaTime)
 			}
 		} // End Authoritive host
 	} // End IsStarted
-	else
+	else if (m_isHost)
 	{
 		if (m_pingmsg.size() <= 0)
 		{
@@ -233,27 +249,26 @@ void GameScene::Enter()
 	vector<NetPlayer> enemys = APIHandler::GetInstance()->getRoomOtherPlayers();
 	net->SetRemotePlayers(enemys);
 
+	for (auto & enemy : enemys)
+	{
+		Enemy * m_enemy = new Enemy();
+		m_enemy->Name = enemy.name;
+		m_gameObjects.push_back(m_enemy);
+		m_enemys.push_back(m_enemy);
+
+		m_pingmsg[enemy.name] = map<int, float>();
+	}
+
 	if (m_isHost)
 	{
-		cout << "Im the host" << endl;
 		net->Send("GAME;STARTED;");
-		for (auto & enemy : enemys)
-		{
-			Enemy * m_enemy = new Enemy();
-			m_enemy->Name = enemy.name;
-			m_gameObjects.push_back(m_enemy);
-			m_enemys.push_back(m_enemy);
-
-			m_pingmsg[enemy.name] = map<int, float>();
-		
-			for (int i = 0; i < 10; i++)
-			{
-				ostringstream ss;
-				ss << "GAME;PING;" << enemy.name << ";" << i << ";";
-				m_pingmsg[enemy.name][i] = currentTime;
-				net->Send(ss.str());
-			}
-		}
+		cout << "Im the host" << endl;
+	} 
+	else
+	{
+		ostringstream ss;
+		ss << "GAME;TIME;" << m_player->Name << ";";
+		net->Send(ss.str());
 	}
 
 }

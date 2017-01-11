@@ -22,6 +22,8 @@ public:
 	static Net * GetInstance();
 
 	void Send(string message);
+	// Only send message to a certain player
+	void Send(string message, string name);
 	vector<string> Receive();
 
 	int GetLocalPort() { return localPort; }

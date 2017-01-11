@@ -48,8 +48,24 @@ void Net::Send(string message)
 			cout << "Socket status: " << s << endl;
 		}
 	}
+}
 
-	cout << "Sending: " << message << endl;
+void Net::Send(string message, string name)
+{
+	for (auto & remote : remotePlayers)
+	{
+		if (remote.name == name)
+		{
+			Socket::Status s = socket.send(message.c_str(), 100, remote.ip, remote.port);
+
+			if (s != sf::Socket::Done)
+			{
+				cout << "Was unable to send message to " << remote.ip << ":" << remote.port << endl;
+				cout << "Socket status: " << s << endl;
+			}
+			break;
+		}
+	}
 }
 
 vector<string> Net::Receive()
