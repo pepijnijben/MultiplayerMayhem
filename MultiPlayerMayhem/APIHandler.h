@@ -33,15 +33,19 @@ private:
 	int currentRoom;
 	Http http;
 
+	string prefix;
+
 	vector<NetPlayer> DeserializePlayers(string message);
 	vector<Room> DeserializeRooms(string message);
 public:
 	static bool HOST;
 	APIHandler()
 	{
-		http.setHost("http://pepijn.pw/");
+		//http.setHost("http://pepijn.pw/");
+		//prefix = "/multiplayer";
 		//http.setHost("http://docker.local/");
-		//http.setHost("http://lobby.server/");
+		http.setHost("http://lobby.server/");
+		prefix = "";
 	};
 	static APIHandler * GetInstance();
 

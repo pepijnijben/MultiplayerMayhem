@@ -71,7 +71,7 @@ void APIHandler::newPlayer(string player, int port)
 
 	ss << "name=" << player << "&port=" << port;
 
-	Http::Request request("/multiplayer/newPlayer.php", Http::Request::Post);
+	Http::Request request(prefix + "/newPlayer.php", Http::Request::Post);
 	request.setBody(ss.str());
 
 	Http::Response response = http.sendRequest(request);
@@ -94,7 +94,7 @@ void APIHandler::checkInPlayer()
 
 	ss << "id=" << me;
 
-	Http::Request request("/multiplayer/checkInPlayer.php", Http::Request::Post);
+	Http::Request request(prefix + "/checkInPlayer.php", Http::Request::Post);
 	request.setBody(ss.str());
 
 	Http::Response response = http.sendRequest(request);
@@ -102,7 +102,7 @@ void APIHandler::checkInPlayer()
 
 vector<NetPlayer> APIHandler::getPlayers()
 {
-	Http::Request request("/multiplayer/getPlayers.php", Http::Request::Get);
+	Http::Request request(prefix + "/getPlayers.php", Http::Request::Get);
 
 	Http::Response response = http.sendRequest(request);
 
@@ -117,7 +117,7 @@ vector<NetPlayer> APIHandler::getRoomPlayers()
 
 	ss << "roomId=" << currentRoom;
 
-	Http::Request request("/multiplayer/getRoomPlayers.php", Http::Request::Post);
+	Http::Request request(prefix + "/getRoomPlayers.php", Http::Request::Post);
 	request.setBody(ss.str());
 
 	Http::Response response = http.sendRequest(request);
@@ -151,7 +151,7 @@ bool APIHandler::createRoom()
 
 	ss << "id=" << me;
 
-	Http::Request request("/multiplayer/createRoom.php", Http::Request::Post);
+	Http::Request request(prefix + "/createRoom.php", Http::Request::Post);
 	request.setBody(ss.str());
 
 	Http::Response response = http.sendRequest(request);
@@ -174,7 +174,7 @@ void APIHandler::removeRoom()
 
 	ss << "roomId=" << currentRoom;
 
-	Http::Request request("/multiplayer/removeRoom.php", Http::Request::Post);
+	Http::Request request(prefix + "/removeRoom.php", Http::Request::Post);
 	request.setBody(ss.str());
 
 	Http::Response response = http.sendRequest(request);
@@ -192,7 +192,7 @@ bool APIHandler::joinRoom(int roomId)
 
 	ss << "id=" << me << "&roomId=" << roomId;
 
-	Http::Request request("/multiplayer/joinRoom.php", Http::Request::Post);
+	Http::Request request(prefix + "/joinRoom.php", Http::Request::Post);
 	request.setBody(ss.str());
 
 	Http::Response response = http.sendRequest(request);
@@ -213,7 +213,7 @@ bool APIHandler::joinRoom(int roomId)
 
 vector<Room> APIHandler::getRooms()
 {
-	Http::Request request("/multiplayer/getRooms.php", Http::Request::Get);
+	Http::Request request(prefix + "/getRooms.php", Http::Request::Get);
 
 	Http::Response response = http.sendRequest(request);
 

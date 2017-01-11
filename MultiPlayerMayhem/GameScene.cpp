@@ -10,6 +10,7 @@ void GameScene::ResetRound()
 	}
 
 	m_player->ResetPlayer();
+	net->Send(m_player->Serialize());
 	m_counter->Start();
 }
 
