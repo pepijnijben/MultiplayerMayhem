@@ -62,7 +62,7 @@ void Enemy::SetPosition(Vector2f pos)
 		m_lines.at(m_lines.size() - 1).push_back(Line(m_tail.at(m_tail.size() - 1), m_position, m_shape.getFillColor()));
 	}
 
-	if (!stopDrawing)
+	if (!stopDrawing && (m_tail.size() == 0 || !(m_tail[m_tail.size() - 1].x == pos.x && m_tail[m_tail.size() - 1].y == pos.y)))
 	{
 		m_tail.push_back(pos);
 	}
@@ -74,10 +74,13 @@ void Enemy::Deserialize(vector<string> token)
 	{
 		m_isAlive = false;
 	}
-	else if (token.size() >= 5)
+	else if (token.size() >= 7)
 	{
 		float x = stof(token.at(2));
 		float y = stof(token.at(3));
+
+		float velX = stof(token.at(5));
+		float velY = stof(token.at(6));
 
 		bool tempDrawing = stoi(token.at(4));
 
@@ -91,14 +94,14 @@ void Enemy::Deserialize(vector<string> token)
 			SetPosition(Vector2f(x, y));
 		}
 
-		if (stopDrawing && !tempDrawing)
+		if (stopDrawing && !tempDrawing && !(m_tail[m_tail.size() - 1].x == x && m_tail[m_tail.size() - 1].y == y))
 		{
 			m_tail.push_back(Vector2f(x, y));
 		}
-
 		stopDrawing = tempDrawing;
 
 		m_shape.setPosition(Vector2f(x, y));
+		m_velocity = Vector2f(velX, velY);
 		currentTick++;
 	}
 }
@@ -110,6 +113,21 @@ bool Enemy::CollidedWith(Vector2f pos)
 	for (auto& obj : m_tail)
 	{
 		if (circlesColliding(pos.x, pos.y, radius, obj.x, obj.y, radius))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Enemy::CollidedWithItself()
+{
+	float radius = m_shape.getRadius();
+
+	for (int i = m_tail.size() - 5; i >= 0; i--)
+	{
+		if (circlesColliding(m_position.x, m_position.y, radius, m_tail[i].x, m_tail[i].y, radius))
 		{
 			return true;
 		}

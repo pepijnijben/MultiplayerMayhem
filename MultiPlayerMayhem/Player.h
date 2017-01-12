@@ -41,6 +41,7 @@ public:
 	string Serialize();
 	void Deserialize(vector<string> token);
 	bool CollidedWith(Vector2f pos);
+	bool CollidedWithItself();
 	bool IsAlive() { return m_isAlive; }
 	void IsAlive(bool val) { m_isAlive = val; }
 };

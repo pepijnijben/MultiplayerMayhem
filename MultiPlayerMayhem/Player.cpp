@@ -151,7 +151,7 @@ string Player::Serialize()
 {
 	ostringstream ss;
 
-	ss << "PLAYER" << ";" << Name << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";";
+	ss << "PLAYER" << ";" << Name << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";" << m_velocity.x << ";" << m_velocity.y << ";";
 	return ss.str();
 }
 
@@ -187,6 +187,21 @@ bool Player::CollidedWith(Vector2f pos)
 	for (auto& obj : m_tail)
 	{
 		if (circlesColliding(pos.x, pos.y, radius, obj.x, obj.y, radius))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Player::CollidedWithItself()
+{
+	float radius = m_shape.getRadius();
+
+	for (int i = m_tail.size() - 5; i >= 0; i--)
+	{
+		if (circlesColliding(m_position.x, m_position.y, radius, m_tail[i].x, m_tail[i].y, radius))
 		{
 			return true;
 		}

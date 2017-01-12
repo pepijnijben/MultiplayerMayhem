@@ -127,7 +127,7 @@ void GameScene::HostOperations(float deltaTime)
 			ostringstream ss;
 
 			// Check if player is outside of the bounds
-			if (m_player->GetPosition().x > 800 || m_player->GetPosition().x < 0 || m_player->GetPosition().y < 0 || m_player->GetPosition().y > 600)
+			if (m_player->GetPosition().x > 800 || m_player->GetPosition().x < 0 || m_player->GetPosition().y < 0 || m_player->GetPosition().y > 600 || m_player->CollidedWithItself())
 			{
 				ss << "PLAYER;" << m_player->Name << ";DEAD;";
 				net->Send(ss.str());
@@ -147,7 +147,7 @@ void GameScene::HostOperations(float deltaTime)
 					net->Send(ss.str());
 					m_player->IsAlive(false);
 				}
-				if (e1->IsAlive() && m_player->CollidedWith(e1->GetPosition()))
+				if (e1->IsAlive() && (m_player->CollidedWith(e1->GetPosition()) || e1->CollidedWithItself()))
 				{
 					ss.str("");
 					ss.clear();

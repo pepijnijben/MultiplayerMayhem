@@ -13,6 +13,7 @@ class Enemy : public GameObject
 		vector<vector<Line>> m_lines;
 
 		bool m_isAlive;
+		Vector2f m_velocity;
 
 		bool stopDrawing = false;
 		int currentTick = 0;
@@ -27,6 +28,7 @@ class Enemy : public GameObject
 		void SetPosition(Vector2f pos) override;
 		void Deserialize(vector<string> token);
 		bool CollidedWith(Vector2f pos);
+		bool CollidedWithItself();
 		void ResetEnemy();
 		bool IsAlive() { return m_isAlive; }
 		void IsAlive(bool val) { m_isAlive = val; }

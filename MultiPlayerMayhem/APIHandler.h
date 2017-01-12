@@ -44,7 +44,7 @@ public:
 		//http.setHost("http://pepijn.pw/");
 		//prefix = "/multiplayer";
 		//http.setHost("http://docker.local/");
-		http.setHost("http://lobby.server/");
+		http.setHost("http://lobby.pepijn.pw/");
 		prefix = "";
 	};
 	static APIHandler * GetInstance();
