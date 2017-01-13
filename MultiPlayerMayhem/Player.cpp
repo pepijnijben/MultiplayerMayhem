@@ -144,6 +144,8 @@ void Player::Update(float deltaTime)
 		}
 		m_position += m_velocity * deltaTime;
 		m_shape.setPosition(GetPosition());
+
+		m_ghostPosition += m_ghostVelocity * deltaTime;
 	}
 }
 
@@ -151,7 +153,14 @@ string Player::Serialize()
 {
 	ostringstream ss;
 
-	ss << "PLAYER" << ";" << Name << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";" << m_velocity.x << ";" << m_velocity.y << ";";
+	if (CalculateDistance(m_ghostPosition, m_position) >= 1.5f || m_ghostDrawing != stopDrawing)
+	{
+		ss << "PLAYER" << ";" << Name << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";" << m_velocity.x << ";" << m_velocity.y << ";";
+
+		m_ghostPosition = m_position;
+		m_ghostVelocity = m_velocity;
+		m_ghostDrawing = stopDrawing;
+	}
 	return ss.str();
 }
 
@@ -208,4 +217,11 @@ bool Player::CollidedWithItself()
 	}
 
 	return false;
+}
+
+float Player::CalculateDistance(const Vector2f p1, const Vector2f p2)
+{
+	float diffY = p1.y - p2.y;
+	float diffX = p1.x - p2.x;
+	return sqrt((diffY * diffY) + (diffX * diffX));
 }

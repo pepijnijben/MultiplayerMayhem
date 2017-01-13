@@ -25,7 +25,6 @@ class Enemy : public GameObject
 
 		void Render(RenderWindow & r) override;
 		void Update(float deltaTime) override;
-		void SetPosition(Vector2f pos) override;
 		void Deserialize(vector<string> token);
 		bool CollidedWith(Vector2f pos);
 		bool CollidedWithItself();

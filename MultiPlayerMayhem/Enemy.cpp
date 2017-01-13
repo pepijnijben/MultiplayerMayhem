@@ -50,22 +50,23 @@ void Enemy::Render(RenderWindow & r)
 
 void Enemy::Update(float deltaTime)
 {
-	//m_shape.setPosition(m_position);
-}
+	m_position += m_velocity * deltaTime;
+	m_shape.setPosition(m_position);
 
-void Enemy::SetPosition(Vector2f pos)
-{
-	m_position = pos;
-
-	if (m_tail.size() > 0 && !stopDrawing)
+	if (currentTick % 10 == 0)
 	{
-		m_lines.at(m_lines.size() - 1).push_back(Line(m_tail.at(m_tail.size() - 1), m_position, m_shape.getFillColor()));
+		if (!stopDrawing && (m_tail.size() == 0 || !(m_tail[m_tail.size() - 1].x == m_position.x && m_tail[m_tail.size() - 1].y == m_position.y)))
+		{
+			if (m_tail.size() > 0)
+			{
+				m_lines.at(m_lines.size() - 1).push_back(Line(m_tail.at(m_tail.size() - 1), m_position, m_shape.getFillColor()));
+			}
+
+			m_tail.push_back(m_position);
+		}
 	}
 
-	if (!stopDrawing && (m_tail.size() == 0 || !(m_tail[m_tail.size() - 1].x == pos.x && m_tail[m_tail.size() - 1].y == pos.y)))
-	{
-		m_tail.push_back(pos);
-	}
+	currentTick++;
 }
 
 void Enemy::Deserialize(vector<string> token)
@@ -87,22 +88,28 @@ void Enemy::Deserialize(vector<string> token)
 		if (stopDrawing && !tempDrawing)
 		{
 			m_lines.push_back(vector<Line>());
+
+			if (!(m_tail[m_tail.size() - 1].x == x && m_tail[m_tail.size() - 1].y == y))
+			{
+				m_tail.push_back(Vector2f(x, y));
+			}
 		}
 
-		if (currentTick % 10 == 0)
-		{
-			SetPosition(Vector2f(x, y));
-		}
-
-		if (stopDrawing && !tempDrawing && !(m_tail[m_tail.size() - 1].x == x && m_tail[m_tail.size() - 1].y == y))
-		{
-			m_tail.push_back(Vector2f(x, y));
-		}
 		stopDrawing = tempDrawing;
 
+		m_position = Vector2f(x, y);
 		m_shape.setPosition(Vector2f(x, y));
 		m_velocity = Vector2f(velX, velY);
-		currentTick++;
+
+		if (m_tail.size() <= 0)
+		{
+			cout << "Begin position: " << x << ", " << y << endl;
+			m_tail.push_back(m_position);
+		}
+		else if (m_tail.size() == 1)
+		{
+			cout << "Huh position: " << m_tail[0].x << ", " << m_tail[0].y << endl;
+		}
 	}
 }
 

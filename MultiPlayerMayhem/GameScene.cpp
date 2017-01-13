@@ -54,6 +54,8 @@ void GameScene::HandleMessages()
 					IsStarted = true;
 					m_counter->SetStartTime(3.0f - (currentTime - stof(values[2])));
 					m_counter->Start();
+
+					net->Send(m_player->Serialize());
 				}
 				else if (values[1] == "RESET")
 				{
@@ -82,7 +84,6 @@ void GameScene::HandleMessages()
 				{
 					if (values[2] == m_player->Name)
 					{
-						cout << "Retrieved PING message " << endl;
 						ostringstream ss;
 						ss << "GAME;PINGRETURNED;" << m_player->Name << ";" << values[3] << ";";
 						net->Send(ss.str());
@@ -103,7 +104,7 @@ void GameScene::HandleMessages()
 						ostringstream ss;
 						ss << "GAME;TIME;" << values[2] << ";" << currentTime + ((totalSum / 10.0f) * 0.5f) << ";";
 						net->Send(ss.str(), values[2]);
-
+						
 						m_pingmsg.erase(values[2]);
 					}
 				}
@@ -212,6 +213,7 @@ void GameScene::HostOperations(float deltaTime)
 			ostringstream ss;
 			ss << "GAME;STARTED;" << currentTime << ";";
 			net->Send(ss.str());
+			net->Send(m_player->Serialize());
 			IsStarted = true;
 			m_counter->Start();
 		}

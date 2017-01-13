@@ -14,6 +14,11 @@ private:
 	vector<Vector2f> m_tail;
 	vector<vector<Line>> m_lines;
 
+	// Ghostobject values
+	Vector2f m_ghostPosition;
+	Vector2f m_ghostVelocity;
+	bool m_ghostDrawing = false;
+
 	bool m_isAlive;
 	
 	float MAX_VELOCITY = 40;
@@ -26,6 +31,7 @@ private:
 	int currentTick = 0;
 
 	Vector2f normalize(const Vector2f& source);
+	float CalculateDistance(const Vector2f p1, const Vector2f p2);
 	void setNewStopDrawingValues();
 public:
 	Player();
