@@ -149,11 +149,11 @@ void Player::Update(float deltaTime)
 	}
 }
 
-string Player::Serialize()
+string Player::Serialize(bool force)
 {
 	ostringstream ss;
 
-	if (CalculateDistance(m_ghostPosition, m_position) >= 1.5f || m_ghostDrawing != stopDrawing)
+	if (force || CalculateDistance(m_ghostPosition, m_position) >= 1.5f || m_ghostDrawing != stopDrawing)
 	{
 		ss << "PLAYER" << ";" << Name << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";" << m_velocity.x << ";" << m_velocity.y << ";";
 

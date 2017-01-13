@@ -44,7 +44,7 @@ public:
 	void Render(RenderWindow & r) override;
 	void Update(float deltaTime) override;
 
-	string Serialize();
+	string Serialize(bool force = false);
 	void Deserialize(vector<string> token);
 	bool CollidedWith(Vector2f pos);
 	bool CollidedWithItself();

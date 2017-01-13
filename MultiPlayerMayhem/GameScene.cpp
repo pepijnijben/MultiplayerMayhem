@@ -54,8 +54,6 @@ void GameScene::HandleMessages()
 					IsStarted = true;
 					m_counter->SetStartTime(3.0f - (currentTime - stof(values[2])));
 					m_counter->Start();
-
-					net->Send(m_player->Serialize());
 				}
 				else if (values[1] == "RESET")
 				{
@@ -73,6 +71,8 @@ void GameScene::HandleMessages()
 							m_pingmsg[values[2]][i] = currentTime;
 							net->Send(ss.str(), values[2]);
 						}
+
+						net->Send(m_player->Serialize(true), values[2]);
 					}
 					else if (values[2] == m_player->Name)
 					{

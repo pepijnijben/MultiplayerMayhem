@@ -103,12 +103,7 @@ void Enemy::Deserialize(vector<string> token)
 
 		if (m_tail.size() <= 0)
 		{
-			cout << "Begin position: " << x << ", " << y << endl;
 			m_tail.push_back(m_position);
-		}
-		else if (m_tail.size() == 1)
-		{
-			cout << "Huh position: " << m_tail[0].x << ", " << m_tail[0].y << endl;
 		}
 	}
 }
