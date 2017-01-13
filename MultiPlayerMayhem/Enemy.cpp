@@ -50,7 +50,16 @@ void Enemy::Render(RenderWindow & r)
 
 void Enemy::Update(float deltaTime)
 {
-	m_position += m_velocity * deltaTime;
+	if (fraction < 1)
+	{
+		fraction += (1.0f / 5.0f);
+		m_position = Lerp(m_position, m_desPosition, fraction);
+	} 
+	else
+	{
+		m_position += m_velocity * deltaTime;
+	}
+
 	m_shape.setPosition(m_position);
 
 	if (currentTick % 10 == 0)
@@ -91,18 +100,25 @@ void Enemy::Deserialize(vector<string> token)
 
 			if (!(m_tail[m_tail.size() - 1].x == x && m_tail[m_tail.size() - 1].y == y))
 			{
-				m_tail.push_back(Vector2f(x, y));
+				m_tail.push_back(m_position);
 			}
 		}
 
 		stopDrawing = tempDrawing;
 
-		m_position = Vector2f(x, y);
-		m_shape.setPosition(Vector2f(x, y));
-		m_velocity = Vector2f(velX, velY);
+		// Set destination
+		if (m_tail.size() > 0)
+		{
+			m_desPosition = m_position + ((Vector2f(velX, velY) * 5.0f) * 0.02f);
+			fraction = 0;
+		}
 
+		m_velocity = Vector2f(velX, velY);
+		m_position += m_velocity * 0.02f;
 		if (m_tail.size() <= 0)
 		{
+			m_position = Vector2f(x, y);
+			m_shape.setPosition(Vector2f(x, y));
 			m_tail.push_back(m_position);
 		}
 	}
@@ -137,6 +153,12 @@ bool Enemy::CollidedWithItself()
 
 	return false;
 }
+
+Vector2f Enemy::Lerp(Vector2f start, Vector2f end, float percent)
+{
+	return (start + percent*(end - start));
+}
+
 
 void Enemy::ResetEnemy()
 {
