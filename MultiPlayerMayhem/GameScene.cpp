@@ -41,7 +41,7 @@ void GameScene::HandleMessages()
 				{
 					if (enemy->Name == values[1])
 					{
-						enemy->Deserialize(values);
+						enemy->Deserialize(values, !m_counter->IsFinnished());
 						break;
 					}
 				}
@@ -50,7 +50,6 @@ void GameScene::HandleMessages()
 			{
 				if (values[1] == "STARTED" && !IsStarted)
 				{
-					cout << "Received started MESSAGE!" << endl;
 					IsStarted = true;
 					m_counter->SetStartTime(3.0f - (currentTime - stof(values[2])));
 					m_counter->Start();
@@ -76,7 +75,6 @@ void GameScene::HandleMessages()
 					}
 					else if (values[2] == m_player->Name)
 					{
-						cout << "Retrieved the time " << endl;
 						currentTime = stof(values[3]);
 					}
 				}

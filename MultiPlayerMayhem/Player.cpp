@@ -11,6 +11,7 @@ Player::Player()
 	m_shape.setOrigin(3.0f, 3.0f);
 
 	m_isAlive = true;
+	Score = 0;
 }
 
 Player::~Player()
@@ -21,6 +22,7 @@ void Player::ResetPlayer()
 {
 	m_isAlive = true;
 	stopDrawing = false;
+	currentTick = 0;
 	m_position.x = (rand() % 400) + 300;
 	m_position.y = (rand() % 400) + 100;
 

@@ -40,6 +40,7 @@ public:
 	void ResetPlayer();
 
 	string Name;
+	int Score;
 
 	void Render(RenderWindow & r) override;
 	void Update(float deltaTime) override;

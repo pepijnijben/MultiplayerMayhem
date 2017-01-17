@@ -32,7 +32,13 @@ void GameUI::Render(sf::RenderWindow & r)
 {
 	UICanvas::Render(r);
 
-	RectangleShape block = RectangleShape(Vector2f(40, 45));
+	RectangleShape block = RectangleShape(Vector2f(195, 600));
+	block.setFillColor(sf::Color(25, 27, 24));
+	block.setPosition(0, 0);
+
+	r.draw(block);
+
+	block = RectangleShape(Vector2f(40, 45));
 	block.setFillColor(m_player->GetColor());
 	block.setPosition(140, 0);
 
@@ -49,11 +55,16 @@ void GameUI::Render(sf::RenderWindow & r)
 	block.setFillColor(m_player->GetColor());
 	block.setPosition(10, 100);
 
-	text = Text(m_player->Name, m_font, 16);
+	text = Text(m_player->Name + " (YOU)", m_font, 16);
 	text.setPosition(Vector2f(20, 100));
 	text.setFillColor(Color::White);
 
 	r.draw(block);
+	r.draw(text);
+
+	text.setString(std::to_string(m_player->Score));
+	text.setStyle(sf::Text::Bold);
+	text.setPosition(160, 100);
 	r.draw(text);
 
 	int i = 1;
@@ -62,10 +73,18 @@ void GameUI::Render(sf::RenderWindow & r)
 		block.setFillColor(e->GetColor());
 		block.setPosition(10, 100 + i * 25);
 		text.setString(e->Name);
+		text.setStyle(sf::Text::Regular);
 		text.setPosition(Vector2f(20, 100 + i * 25));
 
 		r.draw(block);
 		r.draw(text);
+
+		text.setString(std::to_string(m_player->Score));
+		text.setStyle(sf::Text::Bold);
+		text.setPosition(160, 100 + i * 25);
+		r.draw(text);
+
+		i++;
 	}
 	
 	RectangleShape gameField = RectangleShape(Vector2f(600, 590));

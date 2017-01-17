@@ -21,15 +21,17 @@ class Enemy : public GameObject
 		bool stopDrawing = false;
 		int currentTick = 0;
 		Vector2f Lerp(Vector2f start, Vector2f end, float percent);
+		void CheckVelocity();
 	public:
 		string Name;
+		int Score;
 
 		Enemy();
 		~Enemy();
 
 		void Render(RenderWindow & r) override;
 		void Update(float deltaTime) override;
-		void Deserialize(vector<string> token);
+		void Deserialize(vector<string> token, bool reset);
 		bool CollidedWith(Vector2f pos);
 		bool CollidedWithItself();
 		void ResetEnemy();
