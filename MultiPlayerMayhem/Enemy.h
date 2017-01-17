@@ -35,4 +35,5 @@ class Enemy : public GameObject
 		void ResetEnemy();
 		bool IsAlive() { return m_isAlive; }
 		void IsAlive(bool val) { m_isAlive = val; }
+		sf::Color GetColor() { return m_shape.getFillColor(); }
 };

@@ -128,7 +128,7 @@ void GameScene::HostOperations(float deltaTime)
 			ostringstream ss;
 
 			// Check if player is outside of the bounds
-			if (m_player->GetPosition().x > 800 || m_player->GetPosition().x < 0 || m_player->GetPosition().y < 0 || m_player->GetPosition().y > 600 || m_player->CollidedWithItself())
+			if (m_player->GetPosition().x > 795 || m_player->GetPosition().x < 195 || m_player->GetPosition().y < 5 || m_player->GetPosition().y > 595 || m_player->CollidedWithItself())
 			{
 				ss << "PLAYER;" << m_player->Name << ";DEAD;";
 				net->Send(ss.str());
@@ -178,7 +178,7 @@ void GameScene::HostOperations(float deltaTime)
 				if (e1->IsAlive())
 				{
 					// Check if player is outside of the bounds
-					if (e1->GetPosition().x > 800 || e1->GetPosition().x < 0 || e1->GetPosition().y < 0 || e1->GetPosition().y > 600)
+					if (e1->GetPosition().x > 795 || e1->GetPosition().x < 195 || e1->GetPosition().y < 5 || e1->GetPosition().y > 595)
 					{
 						ss.str("");
 						ss.clear();
@@ -278,6 +278,9 @@ void GameScene::Enter()
 
 		m_pingmsg[enemy.name] = map<int, float>();
 	}
+
+	ui->SetEnemies(m_enemys);
+	ui->SetPlayer(m_player);
 
 	if (m_isHost)
 	{

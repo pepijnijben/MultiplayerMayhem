@@ -21,7 +21,7 @@ void Player::ResetPlayer()
 {
 	m_isAlive = true;
 	stopDrawing = false;
-	m_position.x = (rand() % 600) + 100;
+	m_position.x = (rand() % 400) + 300;
 	m_position.y = (rand() % 400) + 100;
 
 	cout << "Start position: " << m_position.x << ", " << m_position.y << endl;
