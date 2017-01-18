@@ -89,6 +89,11 @@ void Enemy::Deserialize(vector<string> token, bool reset)
 	{
 		m_isAlive = false;
 	}
+	else if (token.at(2) == "SCORE")
+	{
+		int points = stoi(token.at(3));
+		Score += points;
+	}
 	else if (token.size() >= 7)
 	{
 		if (reset)

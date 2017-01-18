@@ -4,6 +4,9 @@ bool GameScene::IsStarted = false;
 
 void GameScene::ResetRound()
 {
+	m_deadPlayers.clear();
+	m_deadPlayers.shrink_to_fit();
+
 	for (auto & enemy : m_enemys)
 	{
 		enemy->ResetEnemy();
@@ -126,14 +129,18 @@ void GameScene::HostOperations(float deltaTime)
 			ostringstream ss;
 
 			// Check if player is outside of the bounds
-			if (m_player->GetPosition().x > 795 || m_player->GetPosition().x < 195 || m_player->GetPosition().y < 5 || m_player->GetPosition().y > 595 || m_player->CollidedWithItself())
+			if (m_player->IsAlive() && (m_player->GetPosition().x > 795 || m_player->GetPosition().x < 195 
+				|| m_player->GetPosition().y < 5 || m_player->GetPosition().y > 595 
+				|| m_player->CollidedWithItself()))
 			{
 				ss << "PLAYER;" << m_player->Name << ";DEAD;";
 				net->Send(ss.str());
 				m_player->IsAlive(false);
+				m_deadPlayers.push_back(m_player->Name);
 			}
 
 			int playersAlive = m_player->IsAlive() ? 1 : 0;
+			m_winner = m_player->IsAlive() ? m_player->Name : "";
 			// Checkcollisions
 			for (auto& e1 : m_enemys)
 			{
@@ -145,6 +152,7 @@ void GameScene::HostOperations(float deltaTime)
 					ss << "PLAYER;" << m_player->Name << ";DEAD;";
 					net->Send(ss.str());
 					m_player->IsAlive(false);
+					m_deadPlayers.push_back(m_player->Name);
 				}
 				if (e1->IsAlive() && (m_player->CollidedWith(e1->GetPosition()) || e1->CollidedWithItself()))
 				{
@@ -153,6 +161,7 @@ void GameScene::HostOperations(float deltaTime)
 					ss << "PLAYER;" << e1->Name << ";DEAD;";
 					net->Send(ss.str());
 					e1->IsAlive(false);
+					m_deadPlayers.push_back(e1->Name);
 				}
 
 				// Check against all other enemies
@@ -168,6 +177,7 @@ void GameScene::HostOperations(float deltaTime)
 							ss << "PLAYER;" << e1->Name << ";DEAD;";
 							net->Send(ss.str());
 							e1->IsAlive(false);
+							m_deadPlayers.push_back(e1->Name);
 							break;
 						}
 					}
@@ -183,9 +193,11 @@ void GameScene::HostOperations(float deltaTime)
 						ss << "PLAYER;" << e1->Name << ";DEAD;";
 						net->Send(ss.str());
 						e1->IsAlive(false);
+						m_deadPlayers.push_back(e1->Name);
 					}
 					else
 					{
+						m_winner = e1->Name;
 						playersAlive++;
 					}
 				}
@@ -200,6 +212,54 @@ void GameScene::HostOperations(float deltaTime)
 
 				ss << "GAME;RESET;" << currentTime << ";";
 				net->Send(ss.str());
+
+				// Send all losing players there points
+				for (int i = 0; i < m_deadPlayers.size(); i++)
+				{
+					ss.str("");
+					ss.clear();
+					int points = ((i + 1) * 2) - 1;
+
+					ss << "PLAYER;" << m_deadPlayers[i] << ";SCORE;" << points << ";";
+
+					if (m_deadPlayers[i] == m_player->Name)
+					{
+						m_player->Score += points;
+					}
+					else
+					{
+						for (auto& e : m_enemys)
+						{
+							e->Name == m_deadPlayers[i] ? e->Score += points : e->Score;
+						}
+					}
+					net->Send(ss.str());
+				}
+
+				ss.str("");
+				ss.clear();
+				int points = ((m_enemys.size() + 1) * 2) - 1;
+
+				ss << "PLAYER;" << m_winner << ";SCORE;" << points << ";";
+				net->Send(ss.str());
+
+				// Send winner points
+				if (m_player->Name == m_winner)
+				{
+					m_player->Score += points;
+				}
+				else
+				{
+					for (auto& e : m_enemys)
+					{
+						if (m_winner == e->Name)
+						{
+							e->Score += points;
+							break;
+						}
+					}
+				}				
+
 				ResetRound();
 			}
 		} // End Authoritive host

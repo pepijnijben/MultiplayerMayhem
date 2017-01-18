@@ -172,6 +172,11 @@ void Player::Deserialize(vector<string> token)
 	{
 		m_isAlive = false;
 	}
+	else if (token.at(2) == "SCORE")
+	{
+		int points = stoi(token.at(3));
+		Score += points;
+	}
 }
 
 Vector2f Player::normalize(const Vector2f& source)

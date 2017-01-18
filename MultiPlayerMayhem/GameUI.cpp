@@ -79,7 +79,7 @@ void GameUI::Render(sf::RenderWindow & r)
 		r.draw(block);
 		r.draw(text);
 
-		text.setString(std::to_string(m_player->Score));
+		text.setString(std::to_string(e->Score));
 		text.setStyle(sf::Text::Bold);
 		text.setPosition(160, 100 + i * 25);
 		r.draw(text);

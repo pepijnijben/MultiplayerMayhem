@@ -16,6 +16,9 @@ private:
 	vector<Enemy*> m_enemys;
 	bool m_isHost;
 
+	vector<string> m_deadPlayers;
+	string m_winner;
+
 	Countdown * m_counter;
 	float currentTime;
 	map<string, map<int, float>> m_pingmsg;
