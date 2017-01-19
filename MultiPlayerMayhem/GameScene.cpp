@@ -286,6 +286,7 @@ GameScene::GameScene() : Scene("GAME")
 
 	m_player = new Player();
 	m_gameObjects.push_back(m_player);
+	m_counter->SetPrecision(0);
 	//m_gameObjects.push_back(m_counter);
 
 	ui = new GameUI();
