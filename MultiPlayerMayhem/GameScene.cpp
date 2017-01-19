@@ -4,6 +4,9 @@ bool GameScene::IsStarted = false;
 
 void GameScene::ResetRound()
 {
+	m_deadPlayers.clear();
+	m_deadPlayers.shrink_to_fit();
+
 	for (auto & enemy : m_enemys)
 	{
 		enemy->ResetEnemy();
@@ -41,7 +44,7 @@ void GameScene::HandleMessages()
 				{
 					if (enemy->Name == values[1])
 					{
-						enemy->Deserialize(values);
+						enemy->Deserialize(values, !m_counter->IsFinnished());
 						break;
 					}
 				}
@@ -50,7 +53,6 @@ void GameScene::HandleMessages()
 			{
 				if (values[1] == "STARTED" && !IsStarted)
 				{
-					cout << "Received started MESSAGE!" << endl;
 					IsStarted = true;
 					m_counter->SetStartTime(3.0f - (currentTime - stof(values[2])));
 					m_counter->Start();
@@ -71,10 +73,11 @@ void GameScene::HandleMessages()
 							m_pingmsg[values[2]][i] = currentTime;
 							net->Send(ss.str(), values[2]);
 						}
+
+						net->Send(m_player->Serialize(true), values[2]);
 					}
 					else if (values[2] == m_player->Name)
 					{
-						cout << "Retrieved the time " << endl;
 						currentTime = stof(values[3]);
 					}
 				}
@@ -82,7 +85,6 @@ void GameScene::HandleMessages()
 				{
 					if (values[2] == m_player->Name)
 					{
-						cout << "Retrieved PING message " << endl;
 						ostringstream ss;
 						ss << "GAME;PINGRETURNED;" << m_player->Name << ";" << values[3] << ";";
 						net->Send(ss.str());
@@ -103,7 +105,7 @@ void GameScene::HandleMessages()
 						ostringstream ss;
 						ss << "GAME;TIME;" << values[2] << ";" << currentTime + ((totalSum / 10.0f) * 0.5f) << ";";
 						net->Send(ss.str(), values[2]);
-
+						
 						m_pingmsg.erase(values[2]);
 					}
 				}
@@ -127,14 +129,18 @@ void GameScene::HostOperations(float deltaTime)
 			ostringstream ss;
 
 			// Check if player is outside of the bounds
-			if (m_player->GetPosition().x > 800 || m_player->GetPosition().x < 0 || m_player->GetPosition().y < 0 || m_player->GetPosition().y > 600 || m_player->CollidedWithItself())
+			if (m_player->IsAlive() && (m_player->GetPosition().x > 795 || m_player->GetPosition().x < 195 
+				|| m_player->GetPosition().y < 5 || m_player->GetPosition().y > 595 
+				|| m_player->CollidedWithItself()))
 			{
 				ss << "PLAYER;" << m_player->Name << ";DEAD;";
 				net->Send(ss.str());
 				m_player->IsAlive(false);
+				m_deadPlayers.push_back(m_player->Name);
 			}
 
 			int playersAlive = m_player->IsAlive() ? 1 : 0;
+			m_winner = m_player->IsAlive() ? m_player->Name : "";
 			// Checkcollisions
 			for (auto& e1 : m_enemys)
 			{
@@ -146,6 +152,7 @@ void GameScene::HostOperations(float deltaTime)
 					ss << "PLAYER;" << m_player->Name << ";DEAD;";
 					net->Send(ss.str());
 					m_player->IsAlive(false);
+					m_deadPlayers.push_back(m_player->Name);
 				}
 				if (e1->IsAlive() && (m_player->CollidedWith(e1->GetPosition()) || e1->CollidedWithItself()))
 				{
@@ -154,6 +161,7 @@ void GameScene::HostOperations(float deltaTime)
 					ss << "PLAYER;" << e1->Name << ";DEAD;";
 					net->Send(ss.str());
 					e1->IsAlive(false);
+					m_deadPlayers.push_back(e1->Name);
 				}
 
 				// Check against all other enemies
@@ -169,6 +177,7 @@ void GameScene::HostOperations(float deltaTime)
 							ss << "PLAYER;" << e1->Name << ";DEAD;";
 							net->Send(ss.str());
 							e1->IsAlive(false);
+							m_deadPlayers.push_back(e1->Name);
 							break;
 						}
 					}
@@ -177,16 +186,18 @@ void GameScene::HostOperations(float deltaTime)
 				if (e1->IsAlive())
 				{
 					// Check if player is outside of the bounds
-					if (e1->GetPosition().x > 800 || e1->GetPosition().x < 0 || e1->GetPosition().y < 0 || e1->GetPosition().y > 600)
+					if (e1->GetPosition().x > 795 || e1->GetPosition().x < 195 || e1->GetPosition().y < 5 || e1->GetPosition().y > 595)
 					{
 						ss.str("");
 						ss.clear();
 						ss << "PLAYER;" << e1->Name << ";DEAD;";
 						net->Send(ss.str());
 						e1->IsAlive(false);
+						m_deadPlayers.push_back(e1->Name);
 					}
 					else
 					{
+						m_winner = e1->Name;
 						playersAlive++;
 					}
 				}
@@ -201,6 +212,54 @@ void GameScene::HostOperations(float deltaTime)
 
 				ss << "GAME;RESET;" << currentTime << ";";
 				net->Send(ss.str());
+
+				// Send all losing players there points
+				for (int i = 0; i < m_deadPlayers.size(); i++)
+				{
+					ss.str("");
+					ss.clear();
+					int points = ((i + 1) * 2) - 1;
+
+					ss << "PLAYER;" << m_deadPlayers[i] << ";SCORE;" << points << ";";
+
+					if (m_deadPlayers[i] == m_player->Name)
+					{
+						m_player->Score += points;
+					}
+					else
+					{
+						for (auto& e : m_enemys)
+						{
+							e->Name == m_deadPlayers[i] ? e->Score += points : e->Score;
+						}
+					}
+					net->Send(ss.str());
+				}
+
+				ss.str("");
+				ss.clear();
+				int points = ((m_enemys.size() + 1) * 2) - 1;
+
+				ss << "PLAYER;" << m_winner << ";SCORE;" << points << ";";
+				net->Send(ss.str());
+
+				// Send winner points
+				if (m_player->Name == m_winner)
+				{
+					m_player->Score += points;
+				}
+				else
+				{
+					for (auto& e : m_enemys)
+					{
+						if (m_winner == e->Name)
+						{
+							e->Score += points;
+							break;
+						}
+					}
+				}				
+
 				ResetRound();
 			}
 		} // End Authoritive host
@@ -212,6 +271,7 @@ void GameScene::HostOperations(float deltaTime)
 			ostringstream ss;
 			ss << "GAME;STARTED;" << currentTime << ";";
 			net->Send(ss.str());
+			net->Send(m_player->Serialize());
 			IsStarted = true;
 			m_counter->Start();
 		}
@@ -226,6 +286,7 @@ GameScene::GameScene() : Scene("GAME")
 
 	m_player = new Player();
 	m_gameObjects.push_back(m_player);
+	m_counter->SetPrecision(0);
 	//m_gameObjects.push_back(m_counter);
 
 	ui = new GameUI();
@@ -276,6 +337,9 @@ void GameScene::Enter()
 
 		m_pingmsg[enemy.name] = map<int, float>();
 	}
+
+	ui->SetEnemies(m_enemys);
+	ui->SetPlayer(m_player);
 
 	if (m_isHost)
 	{

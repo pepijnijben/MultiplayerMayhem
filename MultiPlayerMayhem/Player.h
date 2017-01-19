@@ -14,6 +14,11 @@ private:
 	vector<Vector2f> m_tail;
 	vector<vector<Line>> m_lines;
 
+	// Ghostobject values
+	Vector2f m_ghostPosition;
+	Vector2f m_ghostVelocity;
+	bool m_ghostDrawing = false;
+
 	bool m_isAlive;
 	
 	float MAX_VELOCITY = 40;
@@ -26,6 +31,7 @@ private:
 	int currentTick = 0;
 
 	Vector2f normalize(const Vector2f& source);
+	float CalculateDistance(const Vector2f p1, const Vector2f p2);
 	void setNewStopDrawingValues();
 public:
 	Player();
@@ -34,14 +40,16 @@ public:
 	void ResetPlayer();
 
 	string Name;
+	int Score;
 
 	void Render(RenderWindow & r) override;
 	void Update(float deltaTime) override;
 
-	string Serialize();
+	string Serialize(bool force = false);
 	void Deserialize(vector<string> token);
 	bool CollidedWith(Vector2f pos);
 	bool CollidedWithItself();
 	bool IsAlive() { return m_isAlive; }
 	void IsAlive(bool val) { m_isAlive = val; }
+	sf::Color GetColor() { return m_shape.getFillColor(); }
 };

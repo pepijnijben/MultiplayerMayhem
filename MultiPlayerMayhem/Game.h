@@ -11,6 +11,8 @@ private:
 
 public:
 	static bool quit;
+	static bool pause;
+
 	Game();
 	~Game();
 

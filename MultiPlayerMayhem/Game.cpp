@@ -10,6 +10,7 @@ const int MAX_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / MAX_FPS;
 
 bool Game::quit = false;
+bool Game::pause = false;
 
 Game::Game()
 {
@@ -72,6 +73,8 @@ void Game::loop()
 	sf::Clock clock;
 	float deltaTime = 0;
 
+	bool pressed = false;
+
 	while (!Game::quit)
 	{
 		// Input handler
@@ -85,12 +88,24 @@ void Game::loop()
 			}
 		}
 
-		update(deltaTime);
+		if (!pause) update(deltaTime);
 		render();
 
 		if (Keyboard::isKeyPressed(Keyboard::Escape))
 		{
 			Game::quit = true;
+		}
+
+		if (Keyboard::isKeyPressed(Keyboard::Space))
+		{
+			pressed = true;
+		} else
+		{
+			if (pressed)
+			{
+				pause = !pause;
+				pressed = false;
+			}
 		}
 
 		while (clock.getElapsedTime() <= sf::milliseconds(SCREEN_TICKS_PER_FRAME))

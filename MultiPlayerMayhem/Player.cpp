@@ -11,6 +11,7 @@ Player::Player()
 	m_shape.setOrigin(3.0f, 3.0f);
 
 	m_isAlive = true;
+	Score = 0;
 }
 
 Player::~Player()
@@ -21,7 +22,8 @@ void Player::ResetPlayer()
 {
 	m_isAlive = true;
 	stopDrawing = false;
-	m_position.x = (rand() % 600) + 100;
+	currentTick = 0;
+	m_position.x = (rand() % 400) + 300;
 	m_position.y = (rand() % 400) + 100;
 
 	cout << "Start position: " << m_position.x << ", " << m_position.y << endl;
@@ -144,14 +146,23 @@ void Player::Update(float deltaTime)
 		}
 		m_position += m_velocity * deltaTime;
 		m_shape.setPosition(GetPosition());
+
+		m_ghostPosition += m_ghostVelocity * deltaTime;
 	}
 }
 
-string Player::Serialize()
+string Player::Serialize(bool force)
 {
 	ostringstream ss;
 
-	ss << "PLAYER" << ";" << Name << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";" << m_velocity.x << ";" << m_velocity.y << ";";
+	if (force || CalculateDistance(m_ghostPosition, m_position) >= 1.5f || m_ghostDrawing != stopDrawing)
+	{
+		ss << "PLAYER" << ";" << Name << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";" << m_velocity.x << ";" << m_velocity.y << ";";
+
+		m_ghostPosition = m_position;
+		m_ghostVelocity = m_velocity;
+		m_ghostDrawing = stopDrawing;
+	}
 	return ss.str();
 }
 
@@ -160,6 +171,11 @@ void Player::Deserialize(vector<string> token)
 	if (token.at(2) == "DEAD")
 	{
 		m_isAlive = false;
+	}
+	else if (token.at(2) == "SCORE")
+	{
+		int points = stoi(token.at(3));
+		Score += points;
 	}
 }
 
@@ -208,4 +224,11 @@ bool Player::CollidedWithItself()
 	}
 
 	return false;
+}
+
+float Player::CalculateDistance(const Vector2f p1, const Vector2f p2)
+{
+	float diffY = p1.y - p2.y;
+	float diffX = p1.x - p2.x;
+	return sqrt((diffY * diffY) + (diffX * diffX));
 }
