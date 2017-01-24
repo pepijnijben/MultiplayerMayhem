@@ -147,6 +147,7 @@ copy /y ".\fonts\" "$(OutDir)fonts\"</Command>
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="SettingsScene.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="UICanvas.cpp" />
   </ItemGroup>
@@ -170,6 +171,7 @@ copy /y ".\fonts\" "$(OutDir)fonts\"</Command>
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Settings.h" />
+    <ClInclude Include="SettingsScene.h" />
     <ClInclude Include="Snapshot.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="UICanvas.h" />

@@ -96,7 +96,7 @@ void APIHandler::checkInPlayer()
 
 	Http::Request request(prefix + "/checkInPlayer.php", Http::Request::Post);
 	request.setBody(ss.str());
-
+	
 	Http::Response response = http.sendRequest(request);
 }
 

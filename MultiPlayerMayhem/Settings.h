@@ -12,7 +12,7 @@ private:
 	static Settings * instance;
 	Settings() : NetSolution(NetworkSolution::Interpolation),
 	Latency(0),
-	WinningScore(60){ }
+	WinningScore(80){ }
 
 public:
 	static Settings * getInstance();

@@ -96,7 +96,7 @@ void GameUI::Render(sf::RenderWindow & r)
 
 	r.draw(gameField);
 
-	text = Text("60", m_font, 30);
+	text = Text(to_string(Settings::getInstance()->WinningScore), m_font, 30);
 	text.setPosition(Vector2f(145, 7));
 	text.setStyle(sf::Text::Bold);
 	text.setFillColor(Color::White);

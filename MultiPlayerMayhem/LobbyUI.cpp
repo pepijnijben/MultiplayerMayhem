@@ -13,6 +13,11 @@ void OnCreateRoom(Button * caller)
 	}
 }
 
+void OnSettings(Button * caller)
+{
+	SceneManager::GetInstance()->SwitchTo("SETTINGS");
+}
+
 void LobbyUI::updateLobbyList()
 {
 	vector<NetPlayer> players = APIHandler::GetInstance()->getPlayers();
@@ -40,14 +45,19 @@ void LobbyUI::updateRoomList()
 LobbyUI::LobbyUI()
 {
 	// Create room button
-	Button * createRoom = new Button(Vector2f(100, 555), "Create Room");
+	Button * createRoom = new Button(Vector2f(100, 555),   "Create Room");
 	createRoom->AddOnMouseDown(OnCreateRoom);
 
+	Button * openSettings = new Button(Vector2f(100, 495), "    Settings    ");
+	openSettings->AddOnMouseDown(OnSettings);
+
 	// ListBoxes
-	m_pInLobby = new ListBox(Vector2f(25, 25), Vector2f(150, 485));
+	m_pInLobby = new ListBox(Vector2f(25, 25), Vector2f(150, 430));
 	m_rooms = new ListBox(Vector2f(200, 25), Vector2f(575, 550));
 
 	m_gameObjects.push_back(createRoom);
+	m_gameObjects.push_back(openSettings);
+	m_gameObjects.push_back(openSettings);
 	m_gameObjects.push_back(m_pInLobby);
 	m_gameObjects.push_back(m_rooms);
 }

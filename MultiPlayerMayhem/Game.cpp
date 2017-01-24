@@ -5,6 +5,7 @@
 #include "LobbyScene.h"
 #include "RoomScene.h"
 #include "ThreadPool.h"
+#include "SettingsScene.h"
 
 const int MAX_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / MAX_FPS;
@@ -39,6 +40,7 @@ bool Game::init()
 	SceneManager::GetInstance()->AddScene(new GameScene);
 	SceneManager::GetInstance()->AddScene(new LobbyScene);
 	SceneManager::GetInstance()->AddScene(new RoomScene);
+	SceneManager::GetInstance()->AddScene(new SettingsScene);
 
 	SceneManager::GetInstance()->SwitchTo("LOBBY");
 	Font m_font;
