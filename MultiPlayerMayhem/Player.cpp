@@ -160,13 +160,17 @@ string Player::Serialize(bool force)
 
 	ostringstream ss;
 
-	if (force || CalculateDistance(m_ghostPosition, m_position) >= 1.5f || m_ghostDrawing != stopDrawing)
+	if (force || m_ghostDrawing != stopDrawing // Force stuff do resend
+		|| (settings->NetSolution == NetworkSolution::ClientPredictionExtrapolation && CalculateDistance(m_ghostPosition, m_position) >= 1.5f) // ClientPrediction
+		|| (settings->NetSolution == NetworkSolution::Interpolation && currentTime - lastTimeSend > (1000 / 30))) // Interpolation
 	{
 		ss << "PLAYER" << ";" << Name << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";" << m_velocity.x << ";" << m_velocity.y << ";";
 
 		m_ghostPosition = m_position;
 		m_ghostVelocity = m_velocity;
 		m_ghostDrawing = stopDrawing;
+
+		lastTimeSend = currentTime;
 	}
 	return ss.str();
 }

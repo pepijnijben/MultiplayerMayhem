@@ -125,8 +125,9 @@ void Enemy::Deserialize(vector<string> token, bool reset)
 		// Set destination
 		if (m_tail.size() > 0)
 		{
-			m_desPosition = m_position + ((m_velocity * 5.0f) * 0.02f);
+			m_desPosition = Vector2f(x, y) + ((m_velocity * 4.0f) * 0.02f);
 			fraction = 0;
+			//m_position = Vector2f(x, y);
 		}
 
 		if (m_tail.size() <= 0)
