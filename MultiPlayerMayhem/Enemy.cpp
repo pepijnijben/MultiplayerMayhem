@@ -56,7 +56,7 @@ void Enemy::Update(float deltaTime)
 	{
 		if (fraction < 1)
 		{
-			fraction += (1.0f / 5.0f);
+			fraction += (1.0f / 4.0f);
 			m_position = Lerp(m_position, m_desPosition, fraction);
 		} 
 		else
