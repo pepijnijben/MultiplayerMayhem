@@ -13,6 +13,15 @@ void OnBackButton(Button * caller)
 		APIHandler::HOST = false;
 		APIHandler::GetInstance()->removeRoom();
 	}
+	else
+	{
+		if (APIHandler::GetInstance()->leaveRoom())
+		{
+			SceneManager::GetInstance()->SwitchTo("LOBBY");
+		}
+
+		return;
+	}
 
 	SceneManager::GetInstance()->SwitchTo("LOBBY");
 }

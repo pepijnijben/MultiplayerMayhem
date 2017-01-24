@@ -20,7 +20,8 @@ GameUI::~GameUI()
 void GameUI::Update(float deltaTime)
 {
 	UICanvas::Update(deltaTime);
-
+	m_currentTime += deltaTime;
+	
 	if (m_currentTime >= m_updateListsTime)
 	{
 		ThreadPool::GetInstance()->AddJob(bind(&APIHandler::checkInPlayer, APIHandler::GetInstance()));

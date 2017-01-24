@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Line.h"
+#include "Settings.h"
 
 using namespace sf;
 using namespace std;
@@ -8,6 +9,8 @@ using namespace std;
 class Player : public GameObject
 {
 private:
+	Settings * settings;
+
 	Vector2f m_velocity;
 	Vector2f m_angle;
 	CircleShape m_shape;
@@ -25,6 +28,7 @@ private:
 	float TURN_RATE = 2;
 	
 	int currentTime = 0; // in millisecs
+	float lastTimeSend = -500;
 	int stopDrawingAfter = 500;
 	int nextStopDrawing;
 	bool stopDrawing = false;

@@ -62,6 +62,10 @@ void GameScene::HandleMessages()
 					m_counter->SetStartTime(3.0f - (currentTime - stof(values[2])));
 					ResetRound();
 				}
+				else if (values[1] == "SCENE")
+				{
+					SceneManager::GetInstance()->SwitchTo(values[2]);
+				}
 				else if (values[1] == "TIME")
 				{
 					if (m_isHost)
@@ -207,6 +211,8 @@ void GameScene::HostOperations(float deltaTime)
 			  // Round is over cuz one player won!
 			if (playersAlive <= 1)
 			{
+				int highestScore = 0;
+				
 				ss.str("");
 				ss.clear();
 
@@ -225,12 +231,14 @@ void GameScene::HostOperations(float deltaTime)
 					if (m_deadPlayers[i] == m_player->Name)
 					{
 						m_player->Score += points;
+						highestScore = highestScore < m_player->Score ? m_player->Score : highestScore;
 					}
 					else
 					{
 						for (auto& e : m_enemys)
 						{
 							e->Name == m_deadPlayers[i] ? e->Score += points : e->Score;
+							highestScore = highestScore < e->Score ? e->Score : highestScore;
 						}
 					}
 					net->Send(ss.str());
@@ -243,10 +251,12 @@ void GameScene::HostOperations(float deltaTime)
 				ss << "PLAYER;" << m_winner << ";SCORE;" << points << ";";
 				net->Send(ss.str());
 
+
 				// Send winner points
 				if (m_player->Name == m_winner)
 				{
 					m_player->Score += points;
+					highestScore = highestScore < m_player->Score ? m_player->Score : highestScore;
 				}
 				else
 				{
@@ -255,10 +265,19 @@ void GameScene::HostOperations(float deltaTime)
 						if (m_winner == e->Name)
 						{
 							e->Score += points;
+							highestScore = highestScore < e->Score ? e->Score : highestScore;
 							break;
 						}
 					}
 				}				
+
+				// check if no new round is required
+				if (highestScore >= Settings::getInstance()->WinningScore)
+				{
+					// Return to lobby
+					net->Send("GAME;SCENE;ROOM;");
+					SceneManager::GetInstance()->SwitchTo("ROOM");
+				}
 
 				ResetRound();
 			}
@@ -285,11 +304,10 @@ GameScene::GameScene() : Scene("GAME")
 	net = Net::GetInstance();
 
 	m_player = new Player();
-	m_gameObjects.push_back(m_player);
 	m_counter->SetPrecision(0);
-	//m_gameObjects.push_back(m_counter);
 
 	ui = new GameUI();
+	settings = Settings::getInstance();
 }
 
 void GameScene::Update(float deltaTime)
@@ -323,6 +341,15 @@ void GameScene::Enter()
 {
 	m_isHost = APIHandler::GetInstance()->IsHost();
 
+	m_deadPlayers.clear();
+	m_deadPlayers.shrink_to_fit();
+	m_enemys.clear();
+	m_enemys.shrink_to_fit();
+	m_gameObjects.clear();
+	m_gameObjects.shrink_to_fit();
+
+	m_gameObjects.push_back(m_player);
+	m_player->Score = 0;
 	m_player->ResetPlayer();
 	m_player->Name = APIHandler::GetInstance()->GetName();
 	vector<NetPlayer> enemys = APIHandler::GetInstance()->getRoomOtherPlayers();

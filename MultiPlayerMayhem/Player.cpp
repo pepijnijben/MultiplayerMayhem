@@ -4,6 +4,7 @@
 
 Player::Player()
 {
+	settings = Settings::getInstance();
 	srand(time(NULL));
 
 	m_shape.setRadius(3.0f);
@@ -153,6 +154,10 @@ void Player::Update(float deltaTime)
 
 string Player::Serialize(bool force)
 {
+	/*&&
+		(settings->NetSolution == NetworkSolution::ClientPredictionExtrapolation
+			|| (settings->NetSolution == NetworkSolution::Interpolation && currentTime - lastTimeSend > 0.1f))*/
+
 	ostringstream ss;
 
 	if (force || CalculateDistance(m_ghostPosition, m_position) >= 1.5f || m_ghostDrawing != stopDrawing)

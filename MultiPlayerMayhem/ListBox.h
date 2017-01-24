@@ -152,6 +152,7 @@ public:
 	}
 
 	bool IsPressed() const { return m_isPressed; }
+	void IsPressed(bool val) { m_isPressed = val; }
 	int CurrentSelected() const { return m_currentSelected; }
 
 	template<typename Function>

@@ -81,6 +81,7 @@ void LobbyUI::Update(float deltaTime)
 	{
 		if (APIHandler::GetInstance()->joinRoom(m_roomVector[m_rooms->CurrentSelected()].id))
 		{
+			m_rooms->IsPressed(false);
 			SceneManager::GetInstance()->SwitchTo("ROOM");
 		}
 	}

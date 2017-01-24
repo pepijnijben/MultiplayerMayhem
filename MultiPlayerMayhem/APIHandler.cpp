@@ -145,6 +145,26 @@ vector<NetPlayer> APIHandler::getRoomOtherPlayers(vector<NetPlayer> players)
 	return newPlayers;
 }
 
+bool APIHandler::leaveRoom()
+{
+	ostringstream ss;
+
+	ss << "id=" << me;
+
+	Http::Request request(prefix + "/leaveRoom.php", Http::Request::Post);
+	request.setBody(ss.str());
+
+	Http::Response response = http.sendRequest(request);
+
+	if (response.getStatus() != 200)
+	{
+		return false;
+	}
+
+	currentRoom = -1;
+	return true;
+}
+
 bool APIHandler::createRoom()
 {
 	ostringstream ss;
@@ -196,7 +216,7 @@ bool APIHandler::joinRoom(int roomId)
 	request.setBody(ss.str());
 
 	Http::Response response = http.sendRequest(request);
-
+	
 	try
 	{
 		currentRoom = stoi(response.getBody());

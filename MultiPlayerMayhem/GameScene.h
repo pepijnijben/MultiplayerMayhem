@@ -6,11 +6,13 @@
 #include "Button.h"
 #include "GameUI.h"
 #include "Countdown.h"
+#include "Settings.h"
 
 class GameScene : public Scene
 {
 private:
 	Net * net;
+	Settings * settings;
 	GameUI * ui;
 	Player * m_player;
 	vector<Enemy*> m_enemys;
