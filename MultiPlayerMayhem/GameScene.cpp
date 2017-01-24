@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "fstream"
 
 bool GameScene::IsStarted = false;
 
@@ -12,6 +13,19 @@ void GameScene::ResetRound()
 		enemy->ResetEnemy();
 	}
 
+	// Add values to csv vector
+	data.push_back(net->PackagesSend);
+	data.push_back(net->PackagesReceived);
+	data.push_back(net->BytesSend);
+	data.push_back(net->BytesReceived);
+	data.push_back(roundTime);
+
+	net->BytesReceived = 0;
+	net->BytesSend = 0;
+	net->PackagesReceived = 0;
+	net->PackagesSend = 0;
+	roundTime = 0.0f;
+	
 	m_player->ResetPlayer();
 	net->Send(m_player->Serialize());
 	m_counter->Start();
@@ -64,6 +78,20 @@ void GameScene::HandleMessages()
 				}
 				else if (values[1] == "SCENE")
 				{
+					// Save data to csv!
+					ofstream myfile;
+					time_t now = time(0);
+
+					ostringstream ss;
+					ss << "data-" << now << ".csv";
+					myfile.open(ss.str());
+					myfile << "PackageSend,PackageReceived,ByteSend,ByteReceived,roundTime\n";
+
+					for (int i = 0; i < data.size(); i += 4)
+					{
+						myfile << data[i] << "," << data[i + 1] << "," << data[i + 2] << "," << data[i + 3] << "\n";
+					}
+
 					SceneManager::GetInstance()->SwitchTo(values[2]);
 				}
 				else if (values[1] == "TIME")
@@ -277,6 +305,20 @@ void GameScene::HostOperations(float deltaTime)
 				// check if no new round is required
 				if (highestScore >= Settings::getInstance()->WinningScore)
 				{
+					// Save data to csv!
+					ofstream myfile;
+					time_t now = time(0);
+
+					ostringstream ss;
+					ss << "data-" << now << ".csv";
+					myfile.open(ss.str());
+					myfile << "PackageSend,PackageReceived,ByteSend,ByteReceived,roundTime\n";
+
+					for (int i = 0; i < data.size(); i += 4)
+					{
+						myfile << data[i] << "," << data[i + 1] << "," << data[i + 2] << "," << data[i + 3] << "\n";
+					}
+
 					// Return to lobby
 					net->Send("GAME;SCENE;ROOM;");
 					SceneManager::GetInstance()->SwitchTo("ROOM");
@@ -316,6 +358,7 @@ GameScene::GameScene() : Scene("GAME")
 void GameScene::Update(float deltaTime)
 {
 	currentTime += deltaTime;
+	roundTime += deltaTime;
 	ui->Counter = m_counter->CurrentTime();
 
 	HandleMessages();
@@ -350,6 +393,10 @@ void GameScene::Enter()
 	m_enemys.shrink_to_fit();
 	m_gameObjects.clear();
 	m_gameObjects.shrink_to_fit();
+
+	data.clear();
+	data.shrink_to_fit();
+	roundTime = 0;
 
 	m_gameObjects.push_back(m_player);
 	m_player->Score = 0;

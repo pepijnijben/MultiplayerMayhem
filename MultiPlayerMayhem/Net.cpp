@@ -63,6 +63,10 @@ void Net::Send(string message, string name)
 				cout << "Was unable to send message to " << remote.ip << ":" << remote.port << endl;
 				cout << "Socket status: " << s << endl;
 			}
+
+			PackagesSend++;
+			BytesSend += message.size();
+
 			break;
 		}
 	}
@@ -82,6 +86,12 @@ vector<string> Net::Receive()
 	{
 		if (received > 0)
 			messages.push_back(data);
+
+		if (received != 100)
+			cout << "Received: " << received << endl;
+
+		PackagesReceived++;
+		BytesReceived += received;
 	}
 
 	return messages;

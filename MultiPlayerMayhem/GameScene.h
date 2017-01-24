@@ -21,6 +21,9 @@ private:
 	vector<string> m_deadPlayers;
 	string m_winner;
 
+	vector<int> data;
+	float roundTime = 0.0f;
+
 	Countdown * m_counter;
 	float currentTime;
 	map<string, map<int, float>> m_pingmsg;

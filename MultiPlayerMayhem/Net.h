@@ -19,6 +19,11 @@ public:
 	Net();
 	~Net();
 
+	int PackagesSend = 0;
+	int PackagesReceived = 0;
+	int BytesSend = 0;
+	int BytesReceived = 0;
+
 	static Net * GetInstance();
 
 	void Send(string message);
