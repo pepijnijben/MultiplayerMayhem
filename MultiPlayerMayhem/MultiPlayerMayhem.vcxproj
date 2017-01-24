@@ -170,6 +170,7 @@ copy /y ".\fonts\" "$(OutDir)fonts\"</Command>
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Settings.h" />
+    <ClInclude Include="Snapshot.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="UICanvas.h" />
   </ItemGroup>

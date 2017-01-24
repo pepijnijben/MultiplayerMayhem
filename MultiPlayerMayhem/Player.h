@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Line.h"
 #include "Settings.h"
+#include "Snapshot.h"
 
 using namespace sf;
 using namespace std;

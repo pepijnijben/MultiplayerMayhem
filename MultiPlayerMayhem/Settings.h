@@ -10,7 +10,7 @@ class Settings
 {
 private:
 	static Settings * instance;
-	Settings() : NetSolution(NetworkSolution::ClientPredictionExtrapolation),
+	Settings() : NetSolution(NetworkSolution::Interpolation),
 	Latency(0),
 	WinningScore(60){ }
 

@@ -25,4 +25,8 @@ public:
 
 	sf::Vector2f GetPosition() const { return m_position; }
 	virtual void SetPosition(sf::Vector2f pos) { m_position = pos; }
+	sf::Vector2f Lerp(sf::Vector2f start, sf::Vector2f end, float percent)
+	{
+		return (start + percent*(end - start));
+	}
 };

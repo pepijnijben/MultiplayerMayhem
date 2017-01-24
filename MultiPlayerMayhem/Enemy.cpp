@@ -4,6 +4,8 @@
 
 Enemy::Enemy()
 {
+	settings = Settings::getInstance();
+
 	m_isAlive = true;
 	m_shape.setRadius(3.0f);
 
@@ -52,9 +54,32 @@ void Enemy::Render(RenderWindow & r)
 
 void Enemy::Update(float deltaTime)
 {
+	GameTime += deltaTime;
+
 	if (m_isAlive)
 	{
-		if (fraction < 1)
+		// Update player position
+		if (settings->NetSolution == NetworkSolution::Interpolation) // Interpolation
+		{
+			if (m_snapshots.size() > 1)
+			{
+				for (int i = m_snapshots.size() - 1; i > 0; i--)
+				{
+					if (m_snapshots[i - 1].Time < GameTime - 0.1f && m_snapshots[i].Time >= GameTime - 0.1f)
+					{
+						float percentage = ((GameTime - 0.1f) - m_snapshots[i - 1].Time) / (m_snapshots[i].Time - m_snapshots[i - 1].Time);
+						m_position = Lerp(m_snapshots[i - 1].Position, m_snapshots[i].Position, percentage);
+						break;
+					}
+						
+					if (m_snapshots[i].Time < GameTime - 0.1f)
+					{
+						m_position += m_velocity * deltaTime;
+					}
+				} // End loop snapshots
+			}
+		}
+		else if (fraction < 1) // ClientPrediction
 		{
 			fraction += (1.0f / 4.0f);
 			m_position = Lerp(m_position, m_desPosition, fraction);
@@ -64,6 +89,7 @@ void Enemy::Update(float deltaTime)
 			m_position += m_velocity * deltaTime;
 		}
 
+		// Draw stuff
 		m_shape.setPosition(m_position);
 
 		if (currentTick % 10 == 0)
@@ -101,6 +127,7 @@ void Enemy::Deserialize(vector<string> token, bool reset)
 			ResetEnemy();
 		}
 
+		// Get message info
 		float x = stof(token.at(2));
 		float y = stof(token.at(3));
 
@@ -109,6 +136,7 @@ void Enemy::Deserialize(vector<string> token, bool reset)
 
 		bool tempDrawing = stoi(token.at(4));
 
+		// Check if we need to start a new line
 		if (stopDrawing && !tempDrawing)
 		{
 			m_lines.push_back(vector<Line>());
@@ -122,14 +150,32 @@ void Enemy::Deserialize(vector<string> token, bool reset)
 		stopDrawing = tempDrawing;
 		m_velocity = Vector2f(velX, velY);
 
-		// Set destination
-		if (m_tail.size() > 0)
+		// Interpolation
+		if (settings->NetSolution == NetworkSolution::Interpolation)
 		{
-			m_desPosition = Vector2f(x, y) + ((m_velocity * 4.0f) * 0.02f);
-			fraction = 0;
-			//m_position = Vector2f(x, y);
+			//m_snapshots.push_back(Snapshot(stof(token.at(7)), Vector2f(x, y), Vector2f(velX, velY)));
+			m_snapshots.push_back(Snapshot(GameTime, Vector2f(x, y), Vector2f(velX, velY)));
+
+			for (int i = m_snapshots.size() - 1; i >= 0; i--)
+			{
+				if (m_snapshots[i].Time < GameTime - 0.1f)
+				{
+					m_snapshots.erase(m_snapshots.begin() + i);
+				}
+			}
+		}
+		else // ClientPrediction
+		{
+			// Set destination
+			if (m_tail.size() > 0)
+			{
+				m_desPosition = Vector2f(x, y) + ((m_velocity * 4.0f) * 0.02f);
+				fraction = 0;
+				//m_position = Vector2f(x, y);
+			}
 		}
 
+		// When no begin add the begin part of the enemy
 		if (m_tail.size() <= 0)
 		{
 			m_position = Vector2f(x, y);
@@ -162,16 +208,13 @@ bool Enemy::CollidedWithItself()
 	{
 		if (circlesColliding(m_position.x, m_position.y, radius, m_tail[i].x, m_tail[i].y, radius))
 		{
+			cout << "WITH ENEMY SELF! " << m_tail.size() << endl;
+			cout << "(" << m_position.x << ", " << m_position.y << ") (" << m_tail[i].x << ", " << m_tail[i].y << ")" << endl;
 			return true;
 		}
 	}
 
 	return false;
-}
-
-Vector2f Enemy::Lerp(Vector2f start, Vector2f end, float percent)
-{
-	return (start + percent*(end - start));
 }
 
 void Enemy::ResetEnemy()
@@ -181,6 +224,8 @@ void Enemy::ResetEnemy()
 	currentTick = 0;
 	fraction = 1;
 
+	m_snapshots.clear();
+	m_snapshots.shrink_to_fit();
 	m_tail.clear();
 	m_tail.shrink_to_fit();
 	m_lines.clear();

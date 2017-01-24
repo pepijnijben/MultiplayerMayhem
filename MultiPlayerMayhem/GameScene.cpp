@@ -83,6 +83,11 @@ void GameScene::HandleMessages()
 					else if (values[2] == m_player->Name)
 					{
 						currentTime = stof(values[3]);
+
+						for (auto & enemy : m_enemys)
+						{
+							enemy->GameTime = currentTime;
+						}
 					}
 				}
 				else if (values[1] == "PING")
@@ -140,7 +145,6 @@ void GameScene::HostOperations(float deltaTime)
 				ss << "PLAYER;" << m_player->Name << ";DEAD;";
 				net->Send(ss.str());
 				m_player->IsAlive(false);
-				m_deadPlayers.push_back(m_player->Name);
 			}
 
 			int playersAlive = m_player->IsAlive() ? 1 : 0;
@@ -212,7 +216,6 @@ void GameScene::HostOperations(float deltaTime)
 			if (playersAlive <= 1)
 			{
 				int highestScore = 0;
-				
 				ss.str("");
 				ss.clear();
 
@@ -359,6 +362,7 @@ void GameScene::Enter()
 	{
 		Enemy * m_enemy = new Enemy();
 		m_enemy->Name = enemy.name;
+		m_enemy->GameTime = currentTime;
 		m_gameObjects.push_back(m_enemy);
 		m_enemys.push_back(m_enemy);
 

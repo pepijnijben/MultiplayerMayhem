@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObject.h"
 #include "Line.h"
+#include "Settings.h"
+#include "Snapshot.h"
 
 using namespace sf;
 using namespace std;
@@ -8,6 +10,9 @@ using namespace std;
 class Enemy : public GameObject 
 {
 	private:
+		Settings * settings;
+		vector<Snapshot> m_snapshots;
+		
 		CircleShape m_shape;
 		vector<Vector2f> m_tail;
 		vector<vector<Line>> m_lines;
@@ -20,11 +25,11 @@ class Enemy : public GameObject
 
 		bool stopDrawing = false;
 		int currentTick = 0;
-		Vector2f Lerp(Vector2f start, Vector2f end, float percent);
 		void CheckVelocity();
 	public:
 		string Name;
 		int Score;
+		float GameTime;
 
 		Enemy();
 		~Enemy();

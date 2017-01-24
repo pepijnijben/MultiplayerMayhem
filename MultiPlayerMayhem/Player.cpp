@@ -24,8 +24,10 @@ void Player::ResetPlayer()
 	m_isAlive = true;
 	stopDrawing = false;
 	currentTick = 0;
+	lastTimeSend = -500;
 	m_position.x = (rand() % 400) + 300;
 	m_position.y = (rand() % 400) + 100;
+	m_shape.setPosition(m_position);
 
 	cout << "Start position: " << m_position.x << ", " << m_position.y << endl;
 
@@ -145,6 +147,7 @@ void Player::Update(float deltaTime)
 		{
 			stopDrawing = true;
 		}
+
 		m_position += m_velocity * deltaTime;
 		m_shape.setPosition(GetPosition());
 
@@ -154,10 +157,6 @@ void Player::Update(float deltaTime)
 
 string Player::Serialize(bool force)
 {
-	/*&&
-		(settings->NetSolution == NetworkSolution::ClientPredictionExtrapolation
-			|| (settings->NetSolution == NetworkSolution::Interpolation && currentTime - lastTimeSend > 0.1f))*/
-
 	ostringstream ss;
 
 	if (force || m_ghostDrawing != stopDrawing // Force stuff do resend
@@ -165,6 +164,12 @@ string Player::Serialize(bool force)
 		|| (settings->NetSolution == NetworkSolution::Interpolation && currentTime - lastTimeSend > (1000 / 30))) // Interpolation
 	{
 		ss << "PLAYER" << ";" << Name << ";" << m_position.x << ";" << m_position.y << ";" << stopDrawing << ";" << m_velocity.x << ";" << m_velocity.y << ";";
+
+		if (settings->NetSolution == NetworkSolution::Interpolation)
+		{
+			float timeStamp = currentTime * 0.001;
+			ss << timeStamp << ";";
+		} 
 
 		m_ghostPosition = m_position;
 		m_ghostVelocity = m_velocity;
