@@ -17,6 +17,7 @@ private:
 
 	float m_currentTime = 0.0f;
 	float m_updateListsTime = 1.0f;
+	Font m_font;
 	void UpdateUI(float);
 public:
 	SettingsScene();

@@ -76,6 +76,12 @@ void SettingsScene::UpdateUI(float deltaTime)
 
 SettingsScene::SettingsScene() : Scene("SETTINGS")
 {
+	// Load font
+	if (!m_font.loadFromFile("fonts/calibri.ttf"))
+	{
+		cout << "Unable to load fonts/calibri.tff" << endl;
+	}
+
 	settings = Settings::getInstance();
 
 	b1 = new Button(Vector2f(200, 100), "ClientPrediction");
@@ -128,6 +134,20 @@ void SettingsScene::Render(RenderWindow & r)
 	{
 		obj->Render(r);
 	}
+
+	Text text = Text("Network Solution", m_font, 25);
+	text.setPosition(Vector2f(100, 30));
+	text.setStyle(sf::Text::Bold);
+	text.setFillColor(Color::White);
+	r.draw(text);
+
+	text.setString("Winning Points");
+	text.setPosition(Vector2f(80, 330));
+	r.draw(text);
+
+	text.setString("Latency");
+	text.setPosition(Vector2f(80, 430));
+	r.draw(text);
 }
 
 void SettingsScene::Destroy()
