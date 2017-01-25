@@ -55,6 +55,7 @@ void RoomScene::InitUI()
 void RoomScene::UpdateUI(float deltaTime)
 {
 	m_currentTime += deltaTime;
+	Net::GetInstance()->GameTime += deltaTime;
 
 	if (m_currentTime >= m_updateListsTime)
 	{

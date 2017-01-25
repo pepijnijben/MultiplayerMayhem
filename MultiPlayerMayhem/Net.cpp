@@ -1,4 +1,5 @@
 #include "Net.h"
+#include "Settings.h"
 
 Net * Net::instance = 0;
 
@@ -88,13 +89,20 @@ vector<string> Net::Receive()
 	while (socket.receive(data, 100, received, sender, port) != Socket::NotReady)
 	{
 		if (received > 0)
-			messages.push_back(data);
+			m_messages.push_back(Message(GameTime + (Settings::getInstance()->Latency *0.001), data));
+	}
 
-		if (received != 100)
-			cout << "Received: " << received << endl;
+	for (int i = m_messages.size() - 1; i >= 0; i--)
+	{
+		if (m_messages[i].time <= GameTime)
+		{
+			messages.push_back(m_messages[i].message);
 
-		PackagesReceived++;
-		BytesReceived += messages[messages.size() - 1].size();
+			PackagesReceived++;
+			BytesReceived += messages[i].size();
+
+			m_messages.erase(m_messages.begin() + i);
+		}
 	}
 
 	return messages;

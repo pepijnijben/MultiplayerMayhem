@@ -13,6 +13,7 @@ private:
 	Button * b2;
 
 	vector<Button *> m_pointButtons;
+	vector<Button *> m_latencyButtons;
 
 	float m_currentTime = 0.0f;
 	float m_updateListsTime = 1.0f;

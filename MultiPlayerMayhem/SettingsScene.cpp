@@ -23,6 +23,11 @@ void OnPointButton(Button * caller)
 	Settings::getInstance()->WinningScore = stoi(caller->GetTitle());
 }
 
+void OnLatencyButton(Button * caller)
+{
+	Settings::getInstance()->Latency = stoi(caller->GetTitle());
+}
+
 void SettingsScene::UpdateUI(float deltaTime)
 {
 	if (settings->NetSolution == NetworkSolution::Interpolation)
@@ -39,6 +44,18 @@ void SettingsScene::UpdateUI(float deltaTime)
 	for (auto& b : m_pointButtons)
 	{
 		if (b->GetTitle() == to_string(settings->WinningScore))
+		{
+			b->SetActive(false);
+		}
+		else
+		{
+			b->SetActive(true);
+		}
+	}
+
+	for (auto& b : m_latencyButtons)
+	{
+		if (b->GetTitle() == to_string(settings->Latency))
 		{
 			b->SetActive(false);
 		}
@@ -78,6 +95,16 @@ SettingsScene::SettingsScene() : Scene("SETTINGS")
 
 	m_gameObjects.push_back(b1);
 	m_gameObjects.push_back(b2);
+
+	int values[4] = { 0, 50, 125, 250 };
+	for (int i = 0; i < 4; i++)
+	{
+		Button * b = new Button(Vector2f(100 + (75 * i), 500), to_string(values[i]));
+		b->AddOnMouseDown(OnLatencyButton);
+
+		m_latencyButtons.push_back(b);
+		m_gameObjects.push_back(b);
+	}
 
 	Button * back = new Button(Vector2f(750, 565), "Back");
 	back->AddOnMouseDown(OnBackButtonSettings);

@@ -6,6 +6,14 @@
 using namespace std;
 using namespace sf;
 
+struct Message
+{
+	float time;
+	string message;
+
+	Message(float t, string m) { time = t; message = m; };
+};
+
 class Net 
 {
 private:
@@ -15,6 +23,7 @@ private:
 	int localPort = 8081;
 
 	vector<NetPlayer> remotePlayers;
+	vector<Message> m_messages;
 public:
 	Net();
 	~Net();
@@ -23,6 +32,8 @@ public:
 	int PackagesReceived = 0;
 	int BytesSend = 0;
 	int BytesReceived = 0;
+
+	float GameTime = 0;
 
 	static Net * GetInstance();
 

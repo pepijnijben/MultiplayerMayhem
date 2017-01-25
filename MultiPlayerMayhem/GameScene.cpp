@@ -359,6 +359,7 @@ void GameScene::Update(float deltaTime)
 {
 	currentTime += deltaTime;
 	roundTime += deltaTime;
+	net->GameTime = currentTime;
 	ui->Counter = m_counter->CurrentTime();
 
 	HandleMessages();
