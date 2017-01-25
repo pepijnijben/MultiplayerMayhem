@@ -87,9 +87,9 @@ void GameScene::HandleMessages()
 					myfile.open(ss.str());
 					myfile << "PackageSend,PackageReceived,ByteSend,ByteReceived,roundTime\n";
 
-					for (int i = 0; i < data.size(); i += 4)
+					for (int i = 0; i < data.size(); i += 5)
 					{
-						myfile << data[i] << "," << data[i + 1] << "," << data[i + 2] << "," << data[i + 3] << "\n";
+						myfile << data[i] << "," << data[i + 1] << "," << data[i + 2] << "," << data[i + 3] << "," << data[i + 4] << "\n";
 					}
 
 					SceneManager::GetInstance()->SwitchTo(values[2]);
@@ -314,9 +314,9 @@ void GameScene::HostOperations(float deltaTime)
 					myfile.open(ss.str());
 					myfile << "PackageSend,PackageReceived,ByteSend,ByteReceived,roundTime\n";
 
-					for (int i = 0; i < data.size(); i += 4)
+					for (int i = 0; i < data.size(); i += 5)
 					{
-						myfile << data[i] << "," << data[i + 1] << "," << data[i + 2] << "," << data[i + 3] << "\n";
+						myfile << data[i] << "," << data[i + 1] << "," << data[i + 2] << "," << data[i + 3] << "," << data[i + 4] << "\n";
 					}
 
 					// Return to lobby
