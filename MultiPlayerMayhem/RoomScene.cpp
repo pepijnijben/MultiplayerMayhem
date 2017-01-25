@@ -10,6 +10,9 @@ void OnBackButton(Button * caller)
 {
 	if (APIHandler::GetInstance()->IsHost())
 	{
+		
+		Net::GetInstance()->SetRemotePlayers(APIHandler::GetInstance()->getRoomOtherPlayers());
+		Net::GetInstance()->Send("GAME;BACK;");
 		APIHandler::HOST = false;
 		APIHandler::GetInstance()->removeRoom();
 	}
@@ -95,6 +98,10 @@ void RoomScene::Update(float deltaTime)
 				if (values[1] == "STARTED")
 				{
 					SceneManager::GetInstance()->SwitchTo("GAME");
+				}
+				else if (values[1] == "BACK")
+				{
+					SceneManager::GetInstance()->SwitchTo("LOBBY");
 				}
 			}
 		}

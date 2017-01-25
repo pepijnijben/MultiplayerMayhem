@@ -88,19 +88,19 @@ vector<string> Net::Receive()
 
 	while (socket.receive(data, 100, received, sender, port) != Socket::NotReady)
 	{
-		if (received > 0)
-			m_messages.push_back(Message(GameTime + (Settings::getInstance()->Latency *0.001), data));
+		string d = data;
+		if (d.size() > 0)
+			m_messages.push_back(Message(GameTime + (Settings::getInstance()->Latency *0.001), d));
 	}
 
 	for (int i = m_messages.size() - 1; i >= 0; i--)
 	{
 		if (m_messages[i].time <= GameTime)
 		{
-			messages.push_back(m_messages[i].message);
+			messages.insert(messages.begin(), m_messages[i].message);
 
 			PackagesReceived++;
 			BytesReceived += messages[i].size();
-
 			m_messages.erase(m_messages.begin() + i);
 		}
 	}

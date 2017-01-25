@@ -27,7 +27,7 @@ void GameScene::ResetRound()
 	roundTime = 0.0f;
 	
 	m_player->ResetPlayer();
-	net->Send(m_player->Serialize());
+	net->Send(m_player->Serialize(true));
 	m_counter->Start();
 }
 
