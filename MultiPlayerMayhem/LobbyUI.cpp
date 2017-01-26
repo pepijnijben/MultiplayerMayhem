@@ -96,3 +96,12 @@ void LobbyUI::Update(float deltaTime)
 		}
 	}
 }
+
+void LobbyUI::Render(RenderWindow & r)
+{
+	mutexLobby.lock();
+	mutexRooms.lock();
+	UICanvas::Render(r);
+	mutexLobby.unlock();
+	mutexRooms.unlock();
+}

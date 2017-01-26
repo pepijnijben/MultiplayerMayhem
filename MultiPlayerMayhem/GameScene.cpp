@@ -76,6 +76,15 @@ void GameScene::HandleMessages()
 					m_counter->SetStartTime(3.0f - (currentTime - stof(values[2])));
 					ResetRound();
 				}
+				else if (values[1] == "WINNER")
+				{
+					cout << "Round winner: " << lastWinner << endl;
+					lastWinner = values[2];
+				}
+				else if (values[1] == "WIN")
+				{
+					cout << values[2] << " won the game!" << endl;
+				}
 				else if (values[1] == "SCENE")
 				{
 					// Save data to csv!
@@ -244,6 +253,7 @@ void GameScene::HostOperations(float deltaTime)
 			if (playersAlive <= 1)
 			{
 				int highestScore = 0;
+				string highestPlayer = "";
 				ss.str("");
 				ss.clear();
 
@@ -262,6 +272,7 @@ void GameScene::HostOperations(float deltaTime)
 					if (m_deadPlayers[i] == m_player->Name)
 					{
 						m_player->Score += points;
+						highestPlayer = highestScore < m_player->Score ? m_player->Name : highestPlayer;
 						highestScore = highestScore < m_player->Score ? m_player->Score : highestScore;
 					}
 					else
@@ -269,6 +280,7 @@ void GameScene::HostOperations(float deltaTime)
 						for (auto& e : m_enemys)
 						{
 							e->Name == m_deadPlayers[i] ? e->Score += points : e->Score;
+							highestPlayer = highestScore < e->Score ? e->Name : highestPlayer;
 							highestScore = highestScore < e->Score ? e->Score : highestScore;
 						}
 					}
@@ -282,11 +294,16 @@ void GameScene::HostOperations(float deltaTime)
 				ss << "PLAYER;" << m_winner << ";SCORE;" << points << ";";
 				net->Send(ss.str());
 
+				net->Send("GAME;WINNER;" + m_winner + ";");
+				lastWinner = m_winner;
+
+				cout << "Round winner: " << lastWinner << endl;
 
 				// Send winner points
 				if (m_player->Name == m_winner)
 				{
 					m_player->Score += points;
+					highestPlayer = highestScore < m_player->Score ? m_player->Name : highestPlayer;
 					highestScore = highestScore < m_player->Score ? m_player->Score : highestScore;
 				}
 				else
@@ -296,12 +313,14 @@ void GameScene::HostOperations(float deltaTime)
 						if (m_winner == e->Name)
 						{
 							e->Score += points;
+							highestPlayer = highestScore < e->Score ? e->Name : highestPlayer;
 							highestScore = highestScore < e->Score ? e->Score : highestScore;
+
 							break;
 						}
 					}
 				}				
-
+				
 				// check if no new round is required
 				if (highestScore >= Settings::getInstance()->WinningScore)
 				{
@@ -318,6 +337,9 @@ void GameScene::HostOperations(float deltaTime)
 					{
 						myfile << data[i] << "," << data[i + 1] << "," << data[i + 2] << "," << data[i + 3] << "," << data[i + 4] << "\n";
 					}
+
+					net->Send("GAME;WIN;" + highestPlayer + ";");
+					cout << highestPlayer << " won the game!" << endl;
 
 					// Return to lobby
 					net->Send("GAME;SCENE;ROOM;");
@@ -361,6 +383,7 @@ void GameScene::Update(float deltaTime)
 	roundTime += deltaTime;
 	net->GameTime = currentTime;
 	ui->Counter = m_counter->CurrentTime();
+	ui->lastWinner = lastWinner;
 
 	HandleMessages();
 	HostOperations(deltaTime);
@@ -398,6 +421,7 @@ void GameScene::Enter()
 	data.clear();
 	data.shrink_to_fit();
 	roundTime = 0;
+	lastWinner = "";
 
 	m_gameObjects.push_back(m_player);
 	m_player->Score = 0;

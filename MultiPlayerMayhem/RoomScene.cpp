@@ -110,10 +110,12 @@ void RoomScene::Update(float deltaTime)
 
 void RoomScene::Render(RenderWindow & r)
 {
+	mutexRooms.lock();
 	for (auto & obj : m_gameObjects)
 	{
 		obj->Render(r);
 	}
+	mutexRooms.unlock();
 }
 
 void RoomScene::Destroy()

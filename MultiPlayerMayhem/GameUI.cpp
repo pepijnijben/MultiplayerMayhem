@@ -46,7 +46,7 @@ void GameUI::Render(sf::RenderWindow & r)
 	r.draw(block);
 
 	Text text = Text(Counter, m_font, 50);
-	text.setPosition(Vector2f(375,275));
+	text.setPosition(Vector2f(475,275));
 	text.setStyle(sf::Text::Bold);
 	text.setFillColor(Color::White);
 
@@ -105,6 +105,12 @@ void GameUI::Render(sf::RenderWindow & r)
 
 	text = Text("FIRST TO REACH", m_font, 16);
 	text.setPosition(Vector2f(20, 20));
+	text.setFillColor(Color::White);
+
+	r.draw(text);
+
+	text = Text("Last winner: " + lastWinner, m_font, 16);
+	text.setPosition(Vector2f(20, 400));
 	text.setFillColor(Color::White);
 
 	r.draw(text);

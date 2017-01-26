@@ -25,4 +25,5 @@ public:
 	~LobbyUI();
 
 	void Update(float deltaTime) override;
+	void Render(RenderWindow & r) override;
 };

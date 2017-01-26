@@ -20,6 +20,7 @@ private:
 
 	vector<string> m_deadPlayers;
 	string m_winner;
+	string lastWinner;
 
 	vector<int> data;
 	float roundTime = 0.0f;

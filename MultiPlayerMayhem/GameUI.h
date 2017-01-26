@@ -22,4 +22,5 @@ public:
 	void SetEnemies(vector<Enemy*> e) { m_enemys = e; };
 	void SetPlayer(Player * p) { m_player = p; };
 	string Counter = "";
+	string lastWinner = "";
 };
